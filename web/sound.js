@@ -7,8 +7,10 @@
  * 0.35, filtered through the app's energy dial (see STYLE.md §7 / §Sound).
  *
  * Install: npm install uisfx
- * In a bundler-less page, load it from a CDN instead:
- *   const { createUISFX } = await import('https://esm.sh/uisfx');
+ * In a bundler-less page, no separate action is needed: initKarakuliSound()
+ * tries the bare `import('uisfx')` specifier first (so bundled apps keep
+ * npm resolution) and automatically falls back to the esm.sh CDN build
+ * (https://esm.sh/uisfx@0.4) if that fails to resolve.
  *
  * Usage:
  *   import { initKarakuliSound, KRK_CUES } from './sound.js';
@@ -40,17 +42,31 @@ const CALM_CUES = new Set(['success', 'complete', 'error', 'warning']);
 export function initKarakuliSound({ energy = 'calm', volume = 0.35 } = {}) {
   let ui = null;
   let unlocked = false;
+  // Requests made before the async import resolves would otherwise be lost
+  // (ui is still null) — buffer the latest one and apply it once ui exists.
+  let pendingEnabled = null;
+  let pendingVolume = volume;
   const stoppedHandle = { stop: () => {} };
 
+  function onUISFXReady({ createUISFX }) {
+    ui = createUISFX({ pack: 'zen', preferences: {} });
+    ui.setVolume(pendingVolume);
+    if (pendingEnabled !== null) ui.setEnabled(pendingEnabled);
+  }
+
+  function loadUISFX() {
+    // Bare specifier first, so a bundled app resolves it via npm/node_modules
+    // like normal; a plain browser page can't resolve a bare specifier at
+    // all and rejects instantly, so fall back to a CDN build in that case.
+    return import('uisfx').catch(() => import('https://esm.sh/uisfx@0.4'));
+  }
+
   try {
-    import('uisfx')
-      .then(({ createUISFX }) => {
-        ui = createUISFX({ pack: 'zen', preferences: {} });
-        ui.setVolume(volume);
-      })
+    loadUISFX()
+      .then(onUISFXReady)
       .catch(() => {
-        // Offline, no npm resolution, or uisfx missing — sound degrades to
-        // silent no-ops below rather than breaking the app.
+        // Offline, or both the bare specifier and the CDN fallback failed —
+        // sound degrades to silent no-ops below rather than breaking the app.
       });
   } catch {
     // Environments without dynamic import() (very old bundlers) — same
@@ -58,15 +74,15 @@ export function initKarakuliSound({ energy = 'calm', volume = 0.35 } = {}) {
   }
 
   if (typeof document !== 'undefined') {
-    document.addEventListener(
-      'pointerdown',
-      () => {
-        if (unlocked || !ui) return;
-        unlocked = true;
-        ui.unlock().catch(() => {});
-      },
-      { once: true }
-    );
+    // No { once: true }: the import is async, so the first pointerdown can
+    // easily land before ui exists. Stay attached until an unlock actually
+    // succeeds, then detach — a later gesture is what unlocks WebAudio.
+    document.addEventListener('pointerdown', function onFirstPointerDown() {
+      if (unlocked || !ui) return;
+      unlocked = true;
+      document.removeEventListener('pointerdown', onFirstPointerDown);
+      ui.unlock().catch(() => {});
+    });
   }
 
   function allowed(cue) {
@@ -83,9 +99,11 @@ export function initKarakuliSound({ energy = 'calm', volume = 0.35 } = {}) {
       return ui.play(cue);
     },
     setEnabled(on) {
+      pendingEnabled = on;
       ui?.setEnabled(on);
     },
     setVolume(v) {
+      pendingVolume = v;
       ui?.setVolume(v);
     },
     get ui() {
