@@ -16,7 +16,7 @@ implementation("androidx.compose.ui:ui-text-google-fonts:<version>")
 (`R.array.com_google_android_gms_fonts_certs`). Generate it with Android Studio's
 Fonts panel (right-click `res` → New → Font Resource), or hand-write it per the
 [downloadable fonts guide](https://developer.android.com/develop/ui/compose/text/fonts#downloadable-fonts).
-Both Onest and Shantell Sans are on Google Fonts and support Cyrillic.
+Both M PLUS Rounded 1c and Shantell Sans are on Google Fonts and support Cyrillic.
 
 ## Doodle SVGs
 

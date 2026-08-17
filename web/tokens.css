@@ -30,12 +30,13 @@
   --krk-accent: var(--krk-ink); /* apps may override with one pen bright or a signature colour */
   --krk-danger: #B3402F;
 
-  /* Type */
-  --krk-font-sans: 'Onest', 'Inter', system-ui, sans-serif;
+  /* Type — M PLUS Rounded 1c is the UI/body face (rounded terminals read
+     softer next to the hand-drawn pen); Onest kept as fallback only */
+  --krk-font-sans: 'M PLUS Rounded 1c', 'Onest', 'Inter', system-ui, sans-serif;
   --krk-font-hand: 'Shantell Sans', 'Neucha', cursive;
   --krk-text-xs: 13px;
-  --krk-text-sm: 14px;
-  --krk-text-base: 16px;
+  --krk-text-sm: 15px;
+  --krk-text-base: 17px;
   --krk-text-lg: 18px;
   --krk-text-xl: 21px;
   --krk-text-2xl: 26px;
@@ -77,6 +78,7 @@ body {
   color: var(--krk-ink);
   font-family: var(--krk-font-sans);
   font-size: var(--krk-text-base);
+  font-weight: 500;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

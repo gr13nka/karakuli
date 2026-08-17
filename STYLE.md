@@ -63,18 +63,18 @@ Washes are backgrounds, not text colours, and they are never paired with the pen
 
 Two typefaces, two jobs. Both ship with full Cyrillic coverage, which matters — Karakuli is used in both English and Russian contexts and the handwritten voice has to hold up in both scripts.
 
-- **Onest** — the UI and body typeface. Used for everything a user reads to get information: paragraphs, labels, navigation, form fields, settings. Weights 400 (body), 500 (emphasis, UI labels), 700 (headings) only — no other weights exist in this system.
-- **Shantell Sans** — the handwritten accent typeface. Used for short, felt moments: empty-state captions, celebration text, a hand-scrawled label next to a doodle, onboarding taglines. It is a voice, not a reading typeface — it never carries a paragraph. If a sentence runs past roughly one line, it's set in Onest instead.
+- **M PLUS Rounded 1c** — the UI and body typeface. Used for everything a user reads to get information: paragraphs, labels, navigation, form fields, settings. Its rounded terminals were chosen deliberately, after a live side-by-side comparison: next to the hand-drawn pen, a sharper grotesque read like it belonged to a different app, while the rounded strokes echo the doodles even in dense Russian body text. Weights 400 (large quiet passages — long-form reading, lead paragraphs), 500 (default body weight, UI labels), 700 (headings, emphasis) only — no other weights exist in this system. Onest is retired as the primary body face but stays in the fallback chain.
+- **Shantell Sans** — the handwritten accent typeface. Used for short, felt moments: empty-state captions, celebration text, a hand-scrawled label next to a doodle, onboarding taglines. It is a voice, not a reading typeface — it never carries a paragraph. If a sentence runs past roughly one line, it's set in the body face instead.
 
-System fallback chain is `'Onest','Inter',system-ui,sans-serif` for body and `'Shantell Sans','Neucha',cursive` for handwritten accents, so the app degrades gracefully before web fonts load.
+System fallback chain is `'M PLUS Rounded 1c','Onest','Inter',system-ui,sans-serif` for body and `'Shantell Sans','Neucha',cursive` for handwritten accents, so the app degrades gracefully before web fonts load.
 
 ### Type scale
 
 | Token | Size | Typical use |
 |---|---|---|
 | `--krk-text-xs` | 13px | Metadata, timestamps, fine print |
-| `--krk-text-sm` | 14px | Secondary body text, captions, form hints |
-| `--krk-text-base` | 16px | Default body text |
+| `--krk-text-sm` | 15px | Secondary body text, captions, form hints |
+| `--krk-text-base` | 17px | Default body text, set at weight 500 |
 | `--krk-text-lg` | 18px | Lead paragraphs, emphasized body text |
 | `--krk-text-xl` | 21px | Small headings, card titles |
 | `--krk-text-2xl` | 26px | Section headings |

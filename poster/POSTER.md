@@ -34,10 +34,10 @@ Paper background with a dotted grid (the same faint-dot texture as a card in the
 
 ## Type rules
 
-- Headline typeface is always Onest 700, tracked tight (`letter-spacing: -0.02em`).
+- Headline typeface is M PLUS Rounded 1c 700, tracked tight (`letter-spacing: -0.02em`) — step up to weight 800 when 700 reads too light at very large poster scale (most often the Full-bleed shout layout's huge type). 800 is a poster-only exception; `STYLE.md`'s type scale stops at 700 for the apps.
 - Default case is sentence case. ALL CAPS is permitted but sparingly — reserve it for the Full-bleed shout layout, and even there prefer one short punchy word or phrase over a full sentence in caps.
 - Exactly **one** Shantell Sans accent line per poster, maximum. It's a felt aside, not a second headline — if two hand-font lines are competing for attention, cut one.
-- Body copy (captions, fine print) stays Onest 400, same as the apps.
+- Body copy (captions, fine print) stays M PLUS Rounded 1c 500 — the system's default body weight (`STYLE.md` §2), same as the apps.
 
 ## Scaling the pen
 

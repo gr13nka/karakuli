@@ -20,7 +20,8 @@
 
   TO SWAP TEXT
     Edit the .headline / .accent-line / .annotation text nodes directly.
-    Keep the type rules from POSTER.md: Onest 700 for headlines, sentence
+    Keep the type rules from POSTER.md: M PLUS Rounded 1c 700 (step up to 800
+    only where 700 reads too light at poster scale) for headlines, sentence
     case by default (ALL CAPS sparingly, Full-bleed shout only), and at most
     one Shantell Sans accent/annotation line per poster.
 
@@ -48,7 +49,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Shantell+Sans:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Shantell+Sans:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
@@ -84,7 +85,7 @@
     padding: 48px 24px 120px;
     background: var(--krk-paper-2);
     color: var(--krk-ink);
-    font-family: 'Onest', 'Inter', system-ui, sans-serif;
+    font-family: 'M PLUS Rounded 1c', 'Onest', 'Inter', system-ui, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -147,7 +148,7 @@
   }
 
   .headline {
-    font-family: 'Onest', 'Inter', system-ui, sans-serif;
+    font-family: 'M PLUS Rounded 1c', 'Onest', 'Inter', system-ui, sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.15;
@@ -185,6 +186,7 @@
   .poster.shout .doodle { width: 380px; height: 380px; color: var(--krk-paper); }
   .poster.shout .headline {
     font-size: 128px;
+    font-weight: 800; /* 700 read too light at this scale — see POSTER.md type rules */
     color: var(--krk-paper);
     text-transform: uppercase;
   }

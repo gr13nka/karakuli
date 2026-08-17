@@ -7,11 +7,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Shantell+Sans:wght@400;700&display=swap" rel="stylesheet" />
-  <!-- Comparison faces for the "Шрифты" specimen strip in Витрина only —
-       the page's own UI font stays Onest (see tokens.css); these are not
-       wired into any --krk-* token. -->
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700&family=Rubik:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Shantell+Sans:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- M PLUS Rounded 1c is the page's native UI font (baked into
+       tokens.css --krk-font-sans, loaded above). Nunito/Rubik below exist
+       only as override options in the "Три экрана" font switcher. -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="../web/tokens.css" />
   <link rel="stylesheet" href="../web/karakuli.css" />
@@ -44,31 +44,17 @@
       padding: var(--krk-space-6) var(--krk-space-5) var(--krk-space-8);
     }
 
-    /* ---- Live preview: font switcher + readability bump -----------
-       Opt-in overrides driven by data-font/data-bump on <html>, toggled
-       by the control row under "Три экрана" (see script at the bottom).
-       These override the *value* of existing --krk-* custom properties
-       at a more specific selector — tokens.css itself is untouched, and
-       nothing here is on by default. The "Шрифты" comparison cards pin
-       their own font-family/sizes directly (not via these tokens), so
-       they're unaffected — see .demo-font-card[data-font] below. */
+    /* ---- Live preview: font switcher --------------------------------
+       Opt-in override driven by data-font on <html>, toggled by the
+       control row under "Три экрана" (see script at the bottom). M PLUS
+       Rounded 1c is the page's native UI font now (baked into
+       tokens.css --krk-font-sans directly), so that choice needs no rule
+       here at all — only the non-native options override the token's
+       value at a more specific selector. tokens.css itself is untouched. */
 
-    html[data-font="nunito"] { --krk-font-sans: 'Nunito', 'Onest', 'Inter', system-ui, sans-serif; }
-    html[data-font="rubik"] { --krk-font-sans: 'Rubik', 'Onest', 'Inter', system-ui, sans-serif; }
-    html[data-font="mplus"] { --krk-font-sans: 'M PLUS Rounded 1c', 'Onest', 'Inter', system-ui, sans-serif; }
-
-    html[data-bump="on"] {
-      --krk-text-base: 17px;
-      --krk-text-sm: 15px;
-    }
-
-    /* Weight bump only reaches text that doesn't already pin its own
-       font-weight — every heading in this page sets font-weight
-       explicitly, so headings stay put; body copy, meta lines, inputs,
-       etc. inherit this and go medium. */
-    html[data-bump="on"] body {
-      font-weight: 500;
-    }
+    html[data-font="onest"] { --krk-font-sans: 'Onest', 'Inter', system-ui, sans-serif; }
+    html[data-font="nunito"] { --krk-font-sans: 'Nunito', 'M PLUS Rounded 1c', 'Onest', 'Inter', system-ui, sans-serif; }
+    html[data-font="rubik"] { --krk-font-sans: 'Rubik', 'M PLUS Rounded 1c', 'Onest', 'Inter', system-ui, sans-serif; }
 
     /* ---- Header ------------------------------------------------ */
 
@@ -304,54 +290,6 @@
       gap: var(--krk-space-4);
     }
 
-    /* ---- Витрина: font comparison strip ----------------------------- */
-    /* Scoped to this block only — does not touch tokens.css or the page's
-       own UI font (still Onest everywhere else). */
-
-    .demo-font-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--krk-space-4);
-    }
-
-    .demo-font-card {
-      flex: 1 1 260px;
-      min-width: 220px;
-      padding: var(--krk-space-4);
-      background: var(--krk-paper-2);
-      border-radius: 16px 18px 14px 17px / 18px 14px 17px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: var(--krk-space-2);
-    }
-
-    .demo-font-card[data-font="nunito"] { font-family: 'Nunito', sans-serif; }
-    .demo-font-card[data-font="rubik"] { font-family: 'Rubik', sans-serif; }
-    .demo-font-card[data-font="mplus"] { font-family: 'M PLUS Rounded 1c', sans-serif; }
-    .demo-font-card[data-font="onest"] { font-family: 'Onest', 'Inter', system-ui, sans-serif; }
-
-    .demo-font-card__label {
-      font-size: var(--krk-text-xs);
-      color: var(--krk-ink-soft);
-    }
-
-    .demo-font-card__heading {
-      font-size: 26px;
-      font-weight: 700;
-    }
-
-    .demo-font-card__body {
-      font-size: 17px;
-      font-weight: 500;
-      line-height: 1.6;
-    }
-
-    .demo-font-card__meta {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--krk-ink-soft);
-    }
-
     /* ---- Витрина: motif + character galleries ---------------------- */
 
     .demo-motif-grid {
@@ -415,17 +353,24 @@
     }
   </style>
 
-  <!-- Restore the font/bump preview before first paint, so a refresh
+  <!-- Restore the font-switcher preview before first paint, so a refresh
        doesn't flash the default look before the wiring script (bottom of
        body) re-applies the saved choice. Independent of the sound layer
        by design — this must keep working even if sound.js is broken. -->
   <script>
     (function () {
       try {
+        // M PLUS Rounded 1c is now the native UI font (baked into
+        // tokens.css) — a stored 'mplus' choice from before that change,
+        // or no stored choice at all, both mean "native", so neither
+        // needs a data-font attribute.
         var font = localStorage.getItem('krk-demo-font');
-        var bump = localStorage.getItem('krk-demo-bump');
-        if (font) document.documentElement.dataset.font = font;
-        if (bump === 'on') document.documentElement.dataset.bump = 'on';
+        if (font === 'onest' || font === 'nunito' || font === 'rubik') {
+          document.documentElement.dataset.font = font;
+        }
+        // The readability-bump toggle is retired (also baked into
+        // tokens.css now) — clear its stale key once.
+        localStorage.removeItem('krk-demo-bump');
       } catch (e) {
         // localStorage unavailable (private mode, etc.) — defaults stand.
       }
@@ -455,15 +400,11 @@
 
     <div class="demo-font-switcher">
       <div class="demo-font-switcher__group" role="group" aria-label="Шрифт предпросмотра">
-        <button class="krk-btn krk-btn--ghost demo-font-switcher__btn is-active" type="button" data-font-choice="onest">Onest</button>
+        <button class="krk-btn krk-btn--ghost demo-font-switcher__btn is-active" type="button" data-font-choice="mplus">M PLUS Rounded</button>
+        <button class="krk-btn krk-btn--ghost demo-font-switcher__btn" type="button" data-font-choice="onest">Onest</button>
         <button class="krk-btn krk-btn--ghost demo-font-switcher__btn" type="button" data-font-choice="nunito">Nunito</button>
         <button class="krk-btn krk-btn--ghost demo-font-switcher__btn" type="button" data-font-choice="rubik">Rubik</button>
-        <button class="krk-btn krk-btn--ghost demo-font-switcher__btn" type="button" data-font-choice="mplus">M PLUS Rounded</button>
       </div>
-      <label class="krk-choice">
-        <input type="checkbox" class="krk-check" id="krk-bump-toggle" />
-        <span>покрупнее и пожирнее</span>
-      </label>
     </div>
 
     <div class="demo-phones">
@@ -753,35 +694,6 @@
       <p style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);margin-top:var(--krk-space-2);">нажми и послушай — потом скажи, какой звук куда поставить</p>
     </div>
 
-    <h3 class="demo-subheading">Шрифты</h3>
-    <div class="demo-font-strip">
-      <div class="demo-font-card" data-font="nunito">
-        <p class="demo-font-card__label">Nunito</p>
-        <p class="demo-font-card__heading">Сколько сил осталось?</p>
-        <p class="demo-font-card__body">Съешь ещё этих мягких французских булок, да выпей же чаю. Утро начинается не с кофе, а с каляк на полях.</p>
-        <p class="demo-font-card__meta">20 минут · просто · без сахара</p>
-      </div>
-      <div class="demo-font-card" data-font="rubik">
-        <p class="demo-font-card__label">Rubik</p>
-        <p class="demo-font-card__heading">Сколько сил осталось?</p>
-        <p class="demo-font-card__body">Съешь ещё этих мягких французских булок, да выпей же чаю. Утро начинается не с кофе, а с каляк на полях.</p>
-        <p class="demo-font-card__meta">20 минут · просто · без сахара</p>
-      </div>
-      <div class="demo-font-card" data-font="mplus">
-        <p class="demo-font-card__label">M PLUS Rounded 1c</p>
-        <p class="demo-font-card__heading">Сколько сил осталось?</p>
-        <p class="demo-font-card__body">Съешь ещё этих мягких французских булок, да выпей же чаю. Утро начинается не с кофе, а с каляк на полях.</p>
-        <p class="demo-font-card__meta">20 минут · просто · без сахара</p>
-      </div>
-      <div class="demo-font-card" data-font="onest">
-        <p class="demo-font-card__label">Onest (текущий)</p>
-        <p class="demo-font-card__heading">Сколько сил осталось?</p>
-        <p class="demo-font-card__body">Съешь ещё этих мягких французских булок, да выпей же чаю. Утро начинается не с кофе, а с каляк на полях.</p>
-        <p class="demo-font-card__meta">20 минут · просто · без сахара</p>
-      </div>
-    </div>
-    <p style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);margin-top:var(--krk-space-2);">какой шрифт роднее? скажи — запечём в токены</p>
-
     <hr class="krk-divider" />
 
     <h3 class="demo-subheading">Мотивы</h3>
@@ -833,15 +745,20 @@
   <p class="krk-list-row__meta demo-footer">Karakuli v1 · бумага, чернила, каляки</p>
 
   <script>
-    // Font/bump live-preview wiring — deliberately its own script, outside
-    // the sound layer's try/catch below, so the switcher keeps working even
+    // Font-switcher live-preview wiring — deliberately its own script,
+    // outside the sound layer's try/catch below, so it keeps working even
     // if sound.js is broken or missing.
     (function () {
       var buttons = document.querySelectorAll('.demo-font-switcher__btn');
-      var bumpToggle = document.getElementById('krk-bump-toggle');
 
       function applyFont(font) {
-        document.documentElement.dataset.font = font;
+        // 'mplus' is the native UI font (baked into tokens.css) — no
+        // override attribute needed, same as no choice at all.
+        if (font === 'mplus') {
+          delete document.documentElement.dataset.font;
+        } else {
+          document.documentElement.dataset.font = font;
+        }
         buttons.forEach(function (btn) {
           btn.classList.toggle('is-active', btn.dataset.fontChoice === font);
         });
@@ -859,25 +776,9 @@
         });
       });
 
-      if (bumpToggle) {
-        bumpToggle.addEventListener('change', function () {
-          if (bumpToggle.checked) {
-            document.documentElement.dataset.bump = 'on';
-          } else {
-            delete document.documentElement.dataset.bump;
-          }
-          try {
-            localStorage.setItem('krk-demo-bump', bumpToggle.checked ? 'on' : 'off');
-          } catch (e) {
-            // localStorage unavailable — preview still works, just won't persist.
-          }
-        });
-      }
-
-      // Sync button active-state and checkbox to whatever the head-inline
-      // restore script already applied to <html> before first paint.
-      applyFont(document.documentElement.dataset.font || 'onest');
-      if (bumpToggle) bumpToggle.checked = document.documentElement.dataset.bump === 'on';
+      // Sync button active-state to whatever the head-inline restore
+      // script already applied to <html> before first paint.
+      applyFont(document.documentElement.dataset.font || 'mplus');
     })();
   </script>
 

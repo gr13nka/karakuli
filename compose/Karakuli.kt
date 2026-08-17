@@ -99,14 +99,14 @@ private val karakuliFontProvider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs, // TODO: app-specific resource
 )
 
-private val onestGoogleFont = GoogleFont("Onest")
+private val mPlusRounded1cGoogleFont = GoogleFont("M PLUS Rounded 1c")
 private val shantellSansGoogleFont = GoogleFont("Shantell Sans")
 
-/** Body and UI text. Supports Cyrillic on Google Fonts. */
-val OnestFamily = FontFamily(
-    Font(onestGoogleFont, karakuliFontProvider, FontWeight.Normal),
-    Font(onestGoogleFont, karakuliFontProvider, FontWeight.Medium),
-    Font(onestGoogleFont, karakuliFontProvider, FontWeight.Bold),
+/** Body and UI text — M PLUS Rounded 1c. Supports Cyrillic on Google Fonts. */
+val MPlusRounded1cFamily = FontFamily(
+    Font(mPlusRounded1cGoogleFont, karakuliFontProvider, FontWeight.Normal),
+    Font(mPlusRounded1cGoogleFont, karakuliFontProvider, FontWeight.Medium),
+    Font(mPlusRounded1cGoogleFont, karakuliFontProvider, FontWeight.Bold),
 )
 
 /** Handwritten accents only — pull quotes, callouts, the scribble tab label. Not for body text. */
@@ -120,7 +120,7 @@ private fun karakuliTextStyle(
     fontSize: TextUnit,
     lineHeightMultiplier: Float,
     fontWeight: FontWeight,
-    fontFamily: FontFamily = OnestFamily,
+    fontFamily: FontFamily = MPlusRounded1cFamily,
 ): TextStyle = TextStyle(
     fontFamily = fontFamily,
     fontWeight = fontWeight,
@@ -128,9 +128,13 @@ private fun karakuliTextStyle(
     lineHeight = fontSize * lineHeightMultiplier,
 )
 
-// Scale: 13 / 14 / 16 / 18 / 21 / 26 / 32 sp. Body roles use the 1.55 line-height the
-// contract specifies for reading comfort; heading roles use the tighter 1.25. Label roles
-// (buttons, chips, small UI) use 1.3 — usually single-line, so this is a nudge not a rule.
+// Heading roles (display* / headline* / title*) sit on the base scale: 13 / 14 / 16 / 18 /
+// 21 / 26 / 32 sp at 1.25 line-height. Body (bodyLarge/bodyMedium) and label/meta
+// (labelLarge/Medium/Small, bodySmall) were bumped off that scale to 17sp and 15sp — both
+// at FontWeight.Medium — because M PLUS Rounded 1c reads lighter/thinner than Onest did at
+// body sizes, especially in Cyrillic; the size and weight bump keeps it legible. Line-height
+// ratios are unchanged from the original scale: 1.55 for body roles, 1.3 for label roles,
+// 1.25 for headings.
 // The scale tops out at 32sp: display* and headlineLarge reuse that top step rather than
 // inventing a size the system doesn't have — override per-app if a screen genuinely needs
 // something bigger.
@@ -144,12 +148,12 @@ val KarakuliTypography = Typography(
     titleLarge = karakuliTextStyle(26.sp, 1.25f, FontWeight.Bold),
     titleMedium = karakuliTextStyle(18.sp, 1.25f, FontWeight.Bold),
     titleSmall = karakuliTextStyle(16.sp, 1.25f, FontWeight.Bold),
-    bodyLarge = karakuliTextStyle(18.sp, 1.55f, FontWeight.Normal),
-    bodyMedium = karakuliTextStyle(16.sp, 1.55f, FontWeight.Normal),
-    bodySmall = karakuliTextStyle(14.sp, 1.55f, FontWeight.Normal),
-    labelLarge = karakuliTextStyle(16.sp, 1.3f, FontWeight.Medium),
-    labelMedium = karakuliTextStyle(14.sp, 1.3f, FontWeight.Medium),
-    labelSmall = karakuliTextStyle(13.sp, 1.3f, FontWeight.Medium),
+    bodyLarge = karakuliTextStyle(17.sp, 1.55f, FontWeight.Medium),
+    bodyMedium = karakuliTextStyle(17.sp, 1.55f, FontWeight.Medium),
+    bodySmall = karakuliTextStyle(15.sp, 1.55f, FontWeight.Medium),
+    labelLarge = karakuliTextStyle(15.sp, 1.3f, FontWeight.Medium),
+    labelMedium = karakuliTextStyle(15.sp, 1.3f, FontWeight.Medium),
+    labelSmall = karakuliTextStyle(15.sp, 1.3f, FontWeight.Medium),
 )
 
 /** Handwritten accent style — pull quotes, callouts, the scribble tab label. Not for body/UI text. */
