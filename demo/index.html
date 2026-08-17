@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Shantell+Sans:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Comparison faces for the "Шрифты" specimen strip in Витрина only —
+       the page's own UI font stays Onest (see tokens.css); these are not
+       wired into any --krk-* token. -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700&family=Rubik:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="../web/tokens.css" />
   <link rel="stylesheet" href="../web/karakuli.css" />
@@ -247,6 +251,54 @@
     .demo-radio-pair {
       display: flex;
       gap: var(--krk-space-4);
+    }
+
+    /* ---- Витрина: font comparison strip ----------------------------- */
+    /* Scoped to this block only — does not touch tokens.css or the page's
+       own UI font (still Onest everywhere else). */
+
+    .demo-font-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--krk-space-4);
+    }
+
+    .demo-font-card {
+      flex: 1 1 260px;
+      min-width: 220px;
+      padding: var(--krk-space-4);
+      background: var(--krk-paper-2);
+      border-radius: 16px 18px 14px 17px / 18px 14px 17px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--krk-space-2);
+    }
+
+    .demo-font-card[data-font="nunito"] { font-family: 'Nunito', sans-serif; }
+    .demo-font-card[data-font="rubik"] { font-family: 'Rubik', sans-serif; }
+    .demo-font-card[data-font="mplus"] { font-family: 'M PLUS Rounded 1c', sans-serif; }
+    .demo-font-card[data-font="onest"] { font-family: 'Onest', 'Inter', system-ui, sans-serif; }
+
+    .demo-font-card__label {
+      font-size: var(--krk-text-xs);
+      color: var(--krk-ink-soft);
+    }
+
+    .demo-font-card__heading {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .demo-font-card__body {
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    .demo-font-card__meta {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--krk-ink-soft);
     }
 
     /* ---- Витрина: motif + character galleries ---------------------- */
@@ -592,19 +644,62 @@
     <div id="krk-sound-board">
       <h3 class="demo-subheading">Звуки (zen)</h3>
       <div class="demo-buttons-row">
-        <button class="krk-btn krk-btn--ghost" type="button" data-cue="click">click</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="hover">hover</button>
         <button class="krk-btn krk-btn--ghost" type="button" data-cue="press">press</button>
         <button class="krk-btn krk-btn--ghost" type="button" data-cue="release">release</button>
-        <button class="krk-btn krk-btn--ghost" type="button" data-cue="hover">hover</button>
-        <button class="krk-btn krk-btn--ghost" type="button" data-cue="success">success</button>
-        <button class="krk-btn krk-btn--ghost" type="button" data-cue="complete">complete</button>
-        <button class="krk-btn krk-btn--ghost" type="button" data-cue="warning">warning</button>
-        <button class="krk-btn krk-btn--ghost" type="button" data-cue="error">error</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="long-press">long-press</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="select">select</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="deselect">deselect</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="toggle-on">toggle-on</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="toggle-off">toggle-off</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="check">check</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="uncheck">uncheck</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="drag-start">drag-start</button>
         <button class="krk-btn krk-btn--ghost" type="button" data-cue="drop">drop</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="invalid-drop">invalid-drop</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="snap">snap</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="success">success</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="error">error</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="warning">warning</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="info">info</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="complete">complete</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="progress-step">progress-step</button>
         <button class="krk-btn krk-btn--ghost" type="button" data-cue="level-up">level-up</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="streak">streak</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="reward">reward</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="achievement">achievement</button>
       </div>
       <p style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);margin-top:var(--krk-space-2);">нажми и послушай — потом скажи, какой звук куда поставить</p>
     </div>
+
+    <h3 class="demo-subheading">Шрифты</h3>
+    <div class="demo-font-strip">
+      <div class="demo-font-card" data-font="nunito">
+        <p class="demo-font-card__label">Nunito</p>
+        <p class="demo-font-card__heading">Сколько сил осталось?</p>
+        <p class="demo-font-card__body">Съешь ещё этих мягких французских булок, да выпей же чаю. Утро начинается не с кофе, а с каляк на полях.</p>
+        <p class="demo-font-card__meta">20 минут · просто · без сахара</p>
+      </div>
+      <div class="demo-font-card" data-font="rubik">
+        <p class="demo-font-card__label">Rubik</p>
+        <p class="demo-font-card__heading">Сколько сил осталось?</p>
+        <p class="demo-font-card__body">Съешь ещё этих мягких французских булок, да выпей же чаю. Утро начинается не с кофе, а с каляк на полях.</p>
+        <p class="demo-font-card__meta">20 минут · просто · без сахара</p>
+      </div>
+      <div class="demo-font-card" data-font="mplus">
+        <p class="demo-font-card__label">M PLUS Rounded 1c</p>
+        <p class="demo-font-card__heading">Сколько сил осталось?</p>
+        <p class="demo-font-card__body">Съешь ещё этих мягких французских булок, да выпей же чаю. Утро начинается не с кофе, а с каляк на полях.</p>
+        <p class="demo-font-card__meta">20 минут · просто · без сахара</p>
+      </div>
+      <div class="demo-font-card" data-font="onest">
+        <p class="demo-font-card__label">Onest (текущий)</p>
+        <p class="demo-font-card__heading">Сколько сил осталось?</p>
+        <p class="demo-font-card__body">Съешь ещё этих мягких французских булок, да выпей же чаю. Утро начинается не с кофе, а с каляк на полях.</p>
+        <p class="demo-font-card__meta">20 минут · просто · без сахара</p>
+      </div>
+    </div>
+    <p style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);margin-top:var(--krk-space-2);">какой шрифт роднее? скажи — запечём в токены</p>
 
     <hr class="krk-divider" />
 
@@ -695,10 +790,11 @@
         });
 
         // Radios only ever fire 'change' on selection (never on deselection),
-        // so one cue per pick — 'unpick'/release is the user's explicit
-        // choice for the energy-scale radios.
+        // so one cue per pick — KRK_CUES.radio (release) is the user's
+        // explicit choice for the energy-scale radios. Distinct from
+        // pick/unpick, which now cover checkbox/toggle only.
         document.querySelectorAll('.krk-radio').forEach((el) => {
-          el.addEventListener('change', () => krk.play(KRK_CUES.unpick));
+          el.addEventListener('change', () => krk.play(KRK_CUES.radio));
         });
 
         soundToggle?.addEventListener('click', () => {
