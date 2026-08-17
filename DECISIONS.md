@@ -21,6 +21,7 @@ Two sections:
 - More motifs, as app-specific needs surface beyond the current 20-motif library.
 - Print sizes beyond the poster arm's current 1080 reference.
 - Adopting the Compose theme in an actual shipping app — validation still pending.
+- "Karakuli Prose" (working name) — a possible long-form reading register (articles, book notes, recipe stories, blog), inspired by an editorial page the user liked: serif body, justified setting, drop cap, links in a muted red near `--krk-danger`, a small ornament glyph as a section mark, generous spacing. Sketched, not decided: canon paper/ink/accent stay; serif only inside long-form content, chrome stays sans; drop cap in the app accent; a doodle motif (squiggle/leaf) standing in for the fleuron; ragged-right or `hyphens: auto` for Russian instead of naive justification. Cyrillic serif candidates to trial by eye later: Lora, Literata, PT Serif. User deferred — do not implement without their go-ahead.
 
 ---
 
