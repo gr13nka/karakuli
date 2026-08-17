@@ -29,6 +29,14 @@ Two sections:
 
 ### 2026-08-17
 
+#### Entrance animations — sprout+scatter (doodles), draw+rise (cards)
+
+Winners picked by eye from five candidates on a live sampler (`demo/motion.html`), built against a Pinterest reference video (an iOS "days of growth" calendar). Doodles and illustrations sprout (`.krk-enter-sprout`) and enter as a group in a simultaneous scatter burst; cards and list rows enter with draw+rise (`.krk-enter-rise` + `.krk-enter-draw`), staggered in a wave. Rejected as canon defaults: smooth pop (candidate A), flipbook flip-pop (candidate B — a discrete `steps(1, jump-end)` four-phase pop), and quiet fade (candidate D); all three remain sampler-only, not wired into `web/anim.css`. Also rejected: a sequential wave for doodle fields — compared directly against the reference video, the user chose the simultaneous scatter burst instead; wave stays reserved for card lists only.
+
+#### Garden presentation — overlapping doodles, boil kept on
+
+Motifs in a garden render larger than their grid cell (~118–148% with size jitter) to match the reference's dense thicket, rather than sitting tidily inside their cells. Boil stays on for the whole garden, per the §6 boil-scope ruling — a garden counts as one key illustration. Recorded in passing: the first garden render, at ~26px per motif, made the boil imperceptible — the user couldn't tell what the boil toggle was even doing — which is what put the ~2px-displacement/~40px-legibility-floor fact into canon.
+
 #### Typography — M PLUS Rounded 1c (same-day reversal)
 
 Body/UI type is now M PLUS Rounded 1c, body set at 17px/weight 500, meta text at 15px/weight 500. This reverses the day's earlier choice of Onest, which the user rejected after a live side-by-side comparison as "too sharp, too thin/small" for Russian text sitting next to the hand-drawn pen. Onest is demoted to the fallback chain rather than dropped outright. Candidates trialled live before landing on M PLUS Rounded 1c: Nunito, Rubik.

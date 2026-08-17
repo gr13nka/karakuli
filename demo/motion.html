@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Karakuli — движение</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Shantell+Sans:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../web/tokens.css" />
+  <link rel="stylesheet" href="../web/karakuli.css" />
+  <link rel="stylesheet" href="../web/boil.css" />
+  <link rel="stylesheet" href="../web/anim.css" />
+  <link rel="stylesheet" href="motion.css" />
+
+  <!-- boil.js is an ES module — served over http(s), not opened as
+       file://, same requirement as demo/index.html. -->
+  <script type="module" src="../web/boil.js"></script>
+</head>
+<body>
+
+  <header class="demo-header">
+    <div class="demo-header__top">
+      <div class="demo-header__brand">
+        <svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M24,13 C25.3,10.7 24.9,8.5 23,6.5 C21.7,8.8 22.1,11 24,13 M26,14 C29,13.6 31,11.9 32,9 C29,9.4 27,11.1 26,14 M26.5,17 C28.2,19.2 30.4,19.9 33,19 C31.3,16.8 29.1,16.1 26.5,17 M25,18.5 C24.5,21.3 25.6,23.5 28,25 C28.5,22.2 27.4,20 25,18.5 M22,18 C19.1,19 17.4,21 17,24 C19.9,23 21.6,21 22,18 M21,16 C18.9,14.1 16.5,13.8 14,15 C16.1,16.9 18.5,17.3 21,16"/>
+          <path d="M22,15 C22,13 26,13 26,15 C26,17.5 22,17.5 22,15"/>
+          <path d="M24,18.5 C23,26 25,34 23,42 M23,31 C18,29 16,32 19,35 C21,34 23,33 23,31"/>
+        </svg>
+        <h1 class="demo-header__title">Karakuli — движение</h1>
+      </div>
+    </div>
+    <p class="krk-hand demo-header__tagline">«выбираем, как дудл появляется на бумаге»</p>
+  </header>
+
+  <section class="demo-section">
+    <h2 class="demo-section-heading">Появление дудла</h2>
+    <hr class="krk-divider demo-heading-divider" />
+    <p class="demo-section-intro">Пять вариантов появления одного дудла — жми «Ещё раз» под карточкой, чтобы повторить.</p>
+
+    <div class="demo-entrance-row" id="krk-entrance-row"></div>
+  </section>
+
+  <section class="demo-section">
+    <h2 class="demo-section-heading">Сад растёт</h2>
+    <hr class="krk-divider demo-heading-divider" />
+    <p class="demo-section-intro">Реконструкция референса: точки на бумаге превращаются в дудлы — россыпью или волной. Выбери вариант появления, «Пересади» сад заново.</p>
+
+    <div class="demo-controls-row">
+      <div class="demo-variant-picker" id="krk-garden-variant-picker" role="group" aria-label="Вариант появления"></div>
+      <div class="demo-variant-picker" id="krk-garden-stagger-toggle" role="group" aria-label="Способ появления"></div>
+      <button class="krk-btn krk-btn--outline" id="krk-garden-replant" type="button">Пересадить</button>
+      <label class="krk-choice">
+        <input type="checkbox" class="krk-check" id="krk-garden-boil" checked />
+        <span>Кипение</span>
+      </label>
+    </div>
+
+    <div class="krk-card demo-garden-card">
+      <div class="demo-garden-grid" id="krk-garden-grid"></div>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2 class="demo-section-heading">Карточки входят</h2>
+    <hr class="krk-divider demo-heading-divider" />
+    <p class="demo-section-intro">Тот же вопрос для списков: как строки карточек появляются на экране.</p>
+
+    <div class="demo-controls-row">
+      <div class="demo-variant-picker" id="krk-cardlist-variant-picker" role="group" aria-label="Вариант появления карточек"></div>
+      <button class="krk-btn krk-btn--outline" id="krk-cardlist-replay" type="button">Ещё раз</button>
+    </div>
+
+    <div class="demo-cardlist" id="krk-cardlist"></div>
+  </section>
+
+  <p class="krk-list-row__meta demo-footer">Karakuli — черновая витрина движения, не канон</p>
+
+  <script type="module" src="motion.js"></script>
+
+</body>
+</html>

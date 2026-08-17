@@ -184,6 +184,17 @@ Karakuli's illustrations are alive in a small, specific way: key doodles get a s
 
 **Reduced motion:** under `prefers-reduced-motion: reduce`, boil filters are disabled entirely (illustrations render as static, clean line art) and UI transition durations collapse to effectively instant. This is a global guard, not a per-component opt-out — see `tokens.css`.
 
+### Entrances
+
+Entrances are how things arrive on screen for the first time. The doctrine below was picked by eye against a Pinterest reference: an iOS "days of growth" calendar, where a dot-grid of past days pops up as tiny pen-blue doodles, near-simultaneously, with random offsets, boiling continuously once they land. Implementation lives in `web/anim.css` and `web/anim.js`.
+
+1. **Doodles and illustrations sprout.** `.krk-enter-sprout` grows an element up from the ground — transform-origin at the base, `scaleY` 0.25 → 1.05 → 1, ~300ms, a slight overshoot then settle.
+2. **A field of doodles enters as one organic burst, not a sweep.** A garden or a scatter of motifs uses `krkStagger(container, { mode: 'scatter' })` (in `web/anim.js`), which staggers each element by an independent random delay within a ~450ms window, applied via the `--krk-enter-delay` custom property. This is deliberately not a sequential left-to-right sweep — the reference pops everything near-simultaneously, and a sweep reads mechanical.
+3. **Cards and list rows enter with draw+rise.** The row itself uses `.krk-enter-rise` (`translateY` 10px → 0 + fade, 220ms `ease-out`), staggered in a wave (`krkStagger(..., { mode: 'wave' })`, ~60–70ms per row), while the row's doodle icon self-draws with `.krk-enter-draw` (`stroke-dashoffset` 100 → 0 over 450ms, then a subtle settle). Inlined SVG paths need `pathLength="100"` for the draw to line up correctly.
+4. **Entrances mark first appearance only** — screen load, a section revealing, items being added — never hover, focus, or routine state flips. The 150–250ms UI-transition doctrine above is unchanged and covers those cases instead.
+5. **Reduced motion** collapses every entrance to its instant final state, under the same global guard as boil and UI transitions.
+6. **Boil scope:** a doodle field or garden counts as one key illustration, so boiling all its motifs together is sanctioned — the ban on boiling every UI icon individually still stands. Practically, boil's ~2px displacement is invisible below roughly 40px render size: render boiling doodles large enough to actually show it, or don't promise a boil that won't read.
+
 ---
 
 ## 7. Sound
