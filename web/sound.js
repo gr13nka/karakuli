@@ -20,11 +20,18 @@
 
 // Semantic cue mapping — see STYLE.md §Sound for the doctrine behind each
 // entry. Call sites should reach for these names, not raw uisfx cue names,
-// so the mapping stays the single place doctrine changes land.
+// so the mapping stays the single place doctrine changes land. `confirm` is
+// for affirmative completions (not per-checkbox ticks — 'success' read as
+// an unpleasant chime there); `pick`/`unpick` cover a control switching
+// on/off (checkbox check/uncheck, radio select) so on and off sound
+// distinct. These raw cue assignments are provisional, pending the user's
+// by-ear tuning.
 export const KRK_CUES = {
   tap: 'click',
   holdStart: 'press',
   holdEnd: 'release',
+  pick: 'press',
+  unpick: 'release',
   confirm: 'success',
   done: 'complete',
   warn: 'warning',

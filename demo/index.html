@@ -589,6 +589,23 @@
       <label class="krk-choice"><input type="checkbox" class="krk-toggle" checked /><span>Звук</span></label>
     </div>
 
+    <div id="krk-sound-board">
+      <h3 class="demo-subheading">Звуки (zen)</h3>
+      <div class="demo-buttons-row">
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="click">click</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="press">press</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="release">release</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="hover">hover</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="success">success</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="complete">complete</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="warning">warning</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="error">error</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="drop">drop</button>
+        <button class="krk-btn krk-btn--ghost" type="button" data-cue="level-up">level-up</button>
+      </div>
+      <p style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);margin-top:var(--krk-space-2);">нажми и послушай — потом скажи, какой звук куда поставить</p>
+    </div>
+
     <hr class="krk-divider" />
 
     <h3 class="demo-subheading">Мотивы</h3>
@@ -651,6 +668,7 @@
     // STYLE.md §7 / web/sound.js for the doctrine this follows.
     (async () => {
       const soundToggle = document.getElementById('krk-sound-toggle');
+      const soundBoard = document.getElementById('krk-sound-board');
       let enabled = true;
 
       try {
@@ -660,6 +678,13 @@
         document.addEventListener('click', (event) => {
           const btn = event.target.closest('.krk-btn');
           if (!btn) return;
+          if (btn.dataset.cue) {
+            // Sound-board button — plays the raw uisfx cue directly (bypasses
+            // the semantic map and the energy filter) so every zen one-shot
+            // can be auditioned by ear regardless of doctrine.
+            krk.ui?.play(btn.dataset.cue);
+            return;
+          }
           if (btn.id === 'krk-cta-start') {
             krk.play(KRK_CUES.moment);
             return;
@@ -668,8 +693,17 @@
           krk.play(KRK_CUES.tap);
         });
 
-        document.querySelectorAll('.krk-check').forEach((el) => {
-          el.addEventListener('change', () => krk.play(KRK_CUES.confirm));
+        // Checkbox/toggle: on and off need to sound different (pick/unpick),
+        // not the same 'confirm' cue for both — see sound.js doctrine note.
+        document.querySelectorAll('.krk-check, .krk-toggle').forEach((el) => {
+          el.addEventListener('change', () => krk.play(el.checked ? KRK_CUES.pick : KRK_CUES.unpick));
+        });
+
+        // Radios only ever fire 'change' on selection (never on deselection),
+        // so one cue per pick — 'unpick'/release is the user's explicit
+        // choice for the energy-scale radios.
+        document.querySelectorAll('.krk-radio').forEach((el) => {
+          el.addEventListener('change', () => krk.play(KRK_CUES.unpick));
         });
 
         soundToggle?.addEventListener('click', () => {
@@ -679,8 +713,10 @@
         });
       } catch {
         // sound.js missing/incomplete or uisfx unavailable — hide the
-        // toggle rather than show a control that does nothing.
+        // toggle and the sound board rather than show controls that do
+        // nothing.
         if (soundToggle) soundToggle.style.display = 'none';
+        if (soundBoard) soundBoard.style.display = 'none';
       }
     })();
   </script>
