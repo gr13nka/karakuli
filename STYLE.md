@@ -63,8 +63,8 @@ Washes are backgrounds, not text colours, and they are never paired with the pen
 
 Two typefaces, two jobs. Both ship with full Cyrillic coverage, which matters — Karakuli is used in both English and Russian contexts and the handwritten voice has to hold up in both scripts.
 
-- **M PLUS Rounded 1c** — the UI and body typeface. Used for everything a user reads to get information: paragraphs, labels, navigation, form fields, settings. Its rounded terminals were chosen deliberately, after a live side-by-side comparison: next to the hand-drawn pen, a sharper grotesque read like it belonged to a different app, while the rounded strokes echo the doodles even in dense Russian body text. Weights 400 (large quiet passages — long-form reading, lead paragraphs), 500 (default body weight, UI labels), 700 (headings, emphasis) only — no other weights exist in this system. Onest is retired as the primary body face but stays in the fallback chain.
-- **Shantell Sans** — the handwritten accent typeface. Used for short, felt moments: empty-state captions, celebration text, a hand-scrawled label next to a doodle, onboarding taglines. It is a voice, not a reading typeface — it never carries a paragraph. If a sentence runs past roughly one line, it's set in the body face instead.
+- **M PLUS Rounded 1c** (`--krk-font-sans`) — the UI and body typeface. Used for everything a user reads to get information: paragraphs, labels, navigation, form fields, settings. Its rounded terminals were chosen deliberately, after a live side-by-side comparison: next to the hand-drawn pen, a sharper grotesque read like it belonged to a different app, while the rounded strokes echo the doodles even in dense Russian body text. Weights 400 (large quiet passages — long-form reading, lead paragraphs), 500 (default body weight, UI labels), 700 (headings, emphasis) only — no other weights exist in this system. Onest is retired as the primary body face but stays in the fallback chain.
+- **Shantell Sans** (`--krk-font-hand`) — the handwritten accent typeface. Used for short, felt moments: empty-state captions, celebration text, a hand-scrawled label next to a doodle, onboarding taglines. It is a voice, not a reading typeface — it never carries a paragraph. If a sentence runs past roughly one line, it's set in the body face instead.
 
 System fallback chain is `'M PLUS Rounded 1c','Onest','Inter',system-ui,sans-serif` for body and `'Shantell Sans','Neucha',cursive` for handwritten accents, so the app degrades gracefully before web fonts load.
 
@@ -101,11 +101,11 @@ Every stroke in Karakuli — icon, doodle, hero illustration — is built the sa
 
 **Stroke widths by canvas size:**
 
-| Context | viewBox | Stroke width |
-|---|---|---|
-| UI borders (hand-touched elements) | — | 1.5px solid |
-| Doodle icons | `0 0 48 48` | 2.8 |
-| Hero illustrations | `0 0 200 200` | 7 |
+| Context | viewBox | Stroke width | Token |
+|---|---|---|---|
+| UI borders (hand-touched elements) | — | 1.5px solid | `--krk-stroke-ui` |
+| Doodle icons | `0 0 48 48` | 2.8 | `--krk-stroke-icon` |
+| Hero illustrations | `0 0 200 200` | 7 | `--krk-stroke-hero` |
 
 The ratio matters more than the absolute number — a doodle icon and a hero illustration should read as the same pen at different zoom levels, not as two different pens.
 
@@ -141,6 +141,19 @@ Everything else — text alignment, spacing, iconography outside of doodle icons
 - Every interactive element keeps a visible focus state: `outline: 2px solid var(--krk-accent); outline-offset: 2px;`. This is not optional and not replaced by a colour change alone.
 - All boil/wiggle animation is disabled under `prefers-reduced-motion: reduce` (see §7).
 
+### Spacing & radius
+
+Layout runs on a small scale, not a full grid system: `--krk-space-1` 4px, `--krk-space-2` 8px, `--krk-space-3` 12px, `--krk-space-4` 16px, `--krk-space-5` 24px, `--krk-space-6` 32px, `--krk-space-7` 48px, `--krk-space-8` 64px.
+
+Radius follows the same idea — these are the base values a hand-touched container's organic asymmetric radius (item 5, above) wobbles around; a card doesn't land on exactly `12px` on every corner, it scatters four values near it.
+
+| Token | Value | Role |
+|---|---|---|
+| `--krk-radius-sm` | 8px | Small chips, tags, tight controls |
+| `--krk-radius` | 12px | Default — cards, inputs, most containers |
+| `--krk-radius-lg` | 20px | Modals, large panels |
+| `--krk-radius-pill` | 999px | Fully rounded — pills, avatar frames |
+
 ---
 
 ## 5. Colour moments
@@ -167,7 +180,7 @@ Karakuli's illustrations are alive in a small, specific way: key doodles get a s
 - Frames are switched with a `steps()` CSS animation, not a smooth animation — the point is the discrete redraw-by-redraw feel of traditional boil, not a fluid wobble.
 - Reserved for **key illustrations** (heroes, characters, celebration doodles) — not applied wholesale to every icon in the UI. An interface where everything boils constantly is distracting, not alive.
 
-**UI transitions** (unrelated to boil): quiet and fast. 150–250ms, `ease-out`. Panels, modals, and state changes should feel immediate, not performative.
+**UI transitions** (unrelated to boil): quiet and fast — 150ms (`--krk-motion-fast`) to 250ms (`--krk-motion-slow`), eased with `ease-out` (`--krk-motion-ease`). Panels, modals, and state changes should feel immediate, not performative.
 
 **Reduced motion:** under `prefers-reduced-motion: reduce`, boil filters are disabled entirely (illustrations render as static, clean line art) and UI transition durations collapse to effectively instant. This is a global guard, not a per-component opt-out — see `tokens.css`.
 
@@ -180,19 +193,24 @@ Karakuli has an official sound layer, built on [uisfx](https://github.com/romain
 - **Pack: zen, always.** Karakuli's default and only sanctioned pack is `zen` — "paper folds, soft brush, warm wood, and quiet chimes." It's the sound equivalent of the ink-and-paper palette. No other pack may be substituted; mixing packs breaks the same coherence a second typeface or a second accent colour would. The sole exception is an `arcade`-style flourish inside an explicit colour-moment celebration — and even there, prefer zen's `level-up` cue first.
 - **Volume: 0.35 by default.** Sound sits under the interface, never on top of it. Don't raise this per-app without a specific reason.
 
-**Cue mapping** — reach for these semantic names, not raw uisfx cue names, at call sites:
+**Cue mapping** — reach for these semantic names (`KRK_CUES.*` in `web/sound.js`), not raw uisfx cue names, at call sites:
 
-| Interaction | Cue |
-|---|---|
-| Button tap | `click` |
-| Press-and-hold (start / end) | `press` / `release` |
-| Checkbox / toggle turns on | `success` |
-| Whole task or flow finished | `complete` |
-| Destructive confirm shown | `warning` |
-| Error state | `error` |
-| Drag-drop lands | `drop` |
-| Colour moment / celebration / streak | `level-up` |
-| Background work in progress | `loading` (a loop — stop it promptly when the work ends) |
+| Interaction | Semantic name | uisfx cue |
+|---|---|---|
+| Button tap | `tap` | `press` |
+| Press-and-hold (start / end) | `holdStart` / `holdEnd` | `long-press` / `release` |
+| Checkbox / toggle turns on | `pick` | `drag-start` |
+| Checkbox / toggle turns off | `unpick` | `invalid-drop` |
+| Radio / option select | `radio` | `release` — provisional; shares a cue with hold-release. The user noticed the overlap and kept it for now (see `DECISIONS.md` Unsettled). |
+| Whole task or flow finished | `done` | `complete` |
+| Affirmative completion / confirmation | `confirm` | `success` — **not** for per-checkbox ticks; that chime was tried on checkbox-on and rejected as unpleasant, hence `pick` → `drag-start` above. |
+| Destructive confirm shown | `warn` | `warning` |
+| Error state | `fail` | `error` |
+| Drag-drop lands | `drop` | `drop` |
+| Colour moment / celebration / streak | `moment` | `level-up` |
+| Background work in progress | `busy` | `loading` (a loop — stop it promptly when the work ends) |
+
+**Caution:** `'click'` is **not** a valid uisfx cue — playing it does nothing, and that silent failure shipped once as a real bug (buttons went fully silent) before it was caught. Don't reintroduce it. The full uisfx catalog is 78 cues across 13 categories at [uisfx.com](https://uisfx.com) — check there rather than guessing a name.
 
 **Never** play a sound on hover, on scroll, on every keystroke, or on plain navigation. If it isn't a meaningful state change, it stays silent.
 
@@ -256,3 +274,14 @@ Two directions are anticipated but not yet specified in this document, and shoul
 - **Love2D mapping.** Karakuli's web tokens (colour, spacing, type scale) are expected to eventually get a Lua-side equivalent for use in Love2D projects. That mapping — including how the boil filter concept translates to a non-CSS rendering context — is deliberately out of scope here.
 
 Nothing in this section should be treated as settled; it's a placeholder for work that hasn't happened yet.
+
+---
+
+## 12. How this system evolves
+
+Karakuli is meant to grow slowly and on purpose, not accumulate ad hoc exceptions. Canon lives in this file; nothing here should be treated as decided-in-passing.
+
+- **Every change gets a `DECISIONS.md` entry.** Whenever this document changes, `DECISIONS.md` gets a new dated entry recording the decision, the reasoning, and what was rejected and why. The point isn't ceremony — it's so a future session, human or agent, never has to reverse-engineer *why* something is the way it is, and never silently re-litigates or undoes a choice that was already made deliberately.
+- **Half-decided stays in the backlog.** An idea that hasn't been settled goes into `DECISIONS.md`'s "Unsettled" section, not into this file as a soft suggestion or a hedge. STYLE.md states what's true now; it doesn't equivocate.
+- **The sync map and amendment recipe live in the `karakuli-style` skill**, not here — that's where an agent making a change should look for how STYLE.md, `tokens.css`, and the rest of the kit are meant to stay in lockstep, and for the step-by-step process for proposing an amendment.
+- **`tools/check-sync.mjs` is the drift check** — it verifies the kit's files still agree with each other, so canon and implementation don't quietly drift apart. (In progress, being built alongside this section.)
