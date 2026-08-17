@@ -220,7 +220,12 @@ Everything else — palette values, type scale, stroke rules, the six sanctioned
 
 The **motif library** is the workhorse of Karakuli's illustration system: small recurring doodles (plants, stationery, weather, everyday objects relevant to a given app's domain) that get sprinkled into empty states, backgrounds, and decorative corners. Motifs are anonymous — they don't need a name or a personality, just a consistent line quality.
 
-On top of the motif library, Karakuli reserves **one or two recurring characters** — the closest thing the system has to a mascot. These characters are intentionally rationed to a small number of high-value moments: onboarding (introducing the app, guiding the first run), empty states (keeping an empty screen from feeling dead), and celebrations (showing up when the user's earned it). A character that appears everywhere stops feeling like a character and starts feeling like a logo; the rarity is what makes the appearance land.
+On top of the motif library, Karakuli has two canonical mascots — settled, not open candidates:
+
+- **Пельмень** — the primary mascot (`pelmen-idle.svg`, `pelmen-cheer.svg`). Reaches for onboarding heroes, celebrations, and colour moments — anywhere the system is greeting the user or sharing a win.
+- **Батон**, the loaf cat — the secondary mascot (`baton-idle.svg`, `baton-sleep.svg`). Reaches for rest, sleep, and quiet or empty states — a natural fit wherever the tone needs to stay calm rather than celebratory, wellness contexts especially.
+
+Both are intentionally rationed to a small number of high-value moments, not sprinkled everywhere; a character that appears constantly stops feeling like a character and starts feeling like a logo. New poses for either mascot are drawn under the same pen contract as every other hero illustration (`0 0 200 200` viewBox, stroke-width 7), so a new pose still looks like it came from the same hand as the existing ones. No third character joins the roster without deliberate intent — it's closed by default, not by oversight.
 
 ---
 
