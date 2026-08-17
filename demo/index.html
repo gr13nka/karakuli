@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Karakuli</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Shantell+Sans:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../web/tokens.css" />
+  <link rel="stylesheet" href="../web/karakuli.css" />
+  <link rel="stylesheet" href="../web/boil.css" />
+
+  <!-- boil.js is an ES module (it uses `export`), so it's loaded as
+       type="module" here and again via dynamic import() in the sound
+       script below. Module scripts are subject to CORS/same-origin
+       rules — this page must be served over http(s) (e.g. `npx serve`),
+       not opened directly as a file:// URL, or the imports will fail
+       silently and the living-doodle boil / sound layer won't run. -->
+  <script type="module" src="../web/boil.js"></script>
+
+  <style>
+    /* ============================================================
+       Demo-page composition layer.
+       Everything below arranges existing Karakuli tokens/components
+       into this showcase page — no token or component is redefined
+       here, only laid out. Class names are prefixed `demo-` to keep
+       that boundary obvious against the kit's `krk-` namespace.
+       ============================================================ */
+
+    *, *::before, *::after { box-sizing: border-box; }
+    h1, h2, h3, h4, p, ul, li { margin: 0; }
+    img { display: block; max-width: 100%; }
+
+    body {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--krk-space-6) var(--krk-space-5) var(--krk-space-8);
+    }
+
+    /* ---- Header ------------------------------------------------ */
+
+    .demo-header__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--krk-space-4);
+      flex-wrap: wrap;
+    }
+
+    .demo-header__brand {
+      display: flex;
+      align-items: center;
+      gap: var(--krk-space-3);
+    }
+
+    .demo-header__brand svg {
+      color: var(--krk-ink);
+    }
+
+    .demo-header__title {
+      font-size: var(--krk-text-3xl);
+      font-weight: 700;
+    }
+
+    .demo-header__tagline {
+      margin-top: var(--krk-space-2);
+      color: var(--krk-ink-soft);
+      font-size: var(--krk-text-lg);
+    }
+
+    /* ---- Section scaffolding ------------------------------------ */
+
+    .demo-section {
+      margin-top: var(--krk-space-7);
+    }
+
+    .demo-section-heading {
+      font-size: var(--krk-text-2xl);
+      font-weight: 700;
+    }
+
+    .demo-heading-divider {
+      max-width: 220px;
+      margin: var(--krk-space-2) 0 var(--krk-space-5);
+    }
+
+    .demo-subheading {
+      font-size: var(--krk-text-xl);
+      font-weight: 500;
+      margin-top: var(--krk-space-6);
+      margin-bottom: var(--krk-space-3);
+    }
+
+    /* ---- Three phone mockups ------------------------------------ */
+
+    .demo-phones {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--krk-space-5);
+    }
+
+    .demo-phone {
+      position: relative;
+      width: 360px;
+      max-width: 100%;
+      height: 720px;
+      background: var(--krk-paper);
+      border: var(--krk-stroke-ui) solid var(--krk-ink);
+      border-radius: 26px 30px 24px 28px / 30px 24px 28px 26px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .demo-phone__screen {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--krk-space-5);
+    }
+
+    /* The pillnav ships position:fixed for real full-screen apps;
+       confined here so it stays inside the phone mockup instead of
+       sticking to the browser viewport. */
+    .demo-phone .krk-pillnav {
+      position: absolute;
+    }
+
+    .demo-corner-moon {
+      position: absolute;
+      right: var(--krk-space-4);
+      bottom: var(--krk-space-4);
+      color: var(--krk-ink-faint);
+      pointer-events: none;
+    }
+
+    .demo-energy-scale {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--krk-space-2);
+    }
+
+    .demo-energy-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--krk-space-2);
+      color: var(--krk-ink-soft);
+      cursor: pointer;
+    }
+
+    .demo-recipe-card__head {
+      display: flex;
+      align-items: center;
+      gap: var(--krk-space-2);
+      color: var(--krk-ink);
+    }
+
+    .demo-screen-c {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: var(--krk-space-4);
+      min-height: 100%;
+    }
+
+    .demo-hero {
+      width: 200px;
+      height: 200px;
+      color: var(--krk-ink);
+    }
+
+    .demo-moment-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--krk-space-3);
+    }
+
+    /* ---- Витрина: colour swatches -------------------------------- */
+
+    .demo-swatch-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--krk-space-4);
+    }
+
+    .demo-swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--krk-space-1);
+      width: 76px;
+      text-align: center;
+    }
+
+    .demo-swatch__chip {
+      width: 48px;
+      height: 48px;
+      border: var(--krk-stroke-ui) solid var(--krk-ink-faint);
+      border-radius: 8px 10px 7px 9px / 10px 7px 9px 8px;
+    }
+
+    /* ---- Витрина: type specimen ----------------------------------- */
+
+    .demo-type-specimen {
+      display: flex;
+      flex-direction: column;
+      gap: var(--krk-space-3);
+    }
+
+    /* ---- Витрина: buttons / form ----------------------------------- */
+
+    .demo-buttons-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--krk-space-3);
+    }
+
+    /* Danger variant doesn't exist in the kit's button set yet — this
+       page-local extension composes it from the existing accent-fill
+       primary plus the existing --krk-danger token, nothing new is
+       decided here beyond what's already in tokens.css. */
+    .krk-btn--danger {
+      background: var(--krk-danger);
+      color: var(--krk-paper);
+    }
+
+    .demo-form-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: var(--krk-space-5);
+    }
+
+    .demo-field {
+      min-width: 220px;
+    }
+
+    .demo-radio-pair {
+      display: flex;
+      gap: var(--krk-space-4);
+    }
+
+    /* ---- Витрина: motif + character galleries ---------------------- */
+
+    .demo-motif-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--krk-space-4);
+    }
+
+    .demo-motif-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--krk-space-1);
+      width: 64px;
+      text-align: center;
+      color: var(--krk-ink-soft);
+    }
+
+    .demo-motif-item img {
+      width: 44px;
+      height: 44px;
+    }
+
+    .demo-character-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--krk-space-6);
+    }
+
+    .demo-character-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--krk-space-2);
+    }
+
+    .demo-character-group__name {
+      font-size: var(--krk-text-base);
+      font-weight: 500;
+    }
+
+    .demo-character-group__images {
+      display: flex;
+      gap: var(--krk-space-2);
+    }
+
+    .demo-character-group__images img {
+      width: 150px;
+    }
+
+    /* ---- Footer ----------------------------------------------------- */
+
+    .demo-footer {
+      margin-top: var(--krk-space-7);
+      text-align: center;
+    }
+
+    @media (max-width: 400px) {
+      .demo-phone {
+        height: 640px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="demo-header">
+    <div class="demo-header__top">
+      <div class="demo-header__brand">
+        <svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M24,13 C25.3,10.7 24.9,8.5 23,6.5 C21.7,8.8 22.1,11 24,13 M26,14 C29,13.6 31,11.9 32,9 C29,9.4 27,11.1 26,14 M26.5,17 C28.2,19.2 30.4,19.9 33,19 C31.3,16.8 29.1,16.1 26.5,17 M25,18.5 C24.5,21.3 25.6,23.5 28,25 C28.5,22.2 27.4,20 25,18.5 M22,18 C19.1,19 17.4,21 17,24 C19.9,23 21.6,21 22,18 M21,16 C18.9,14.1 16.5,13.8 14,15 C16.1,16.9 18.5,17.3 21,16"/>
+          <path d="M22,15 C22,13 26,13 26,15 C26,17.5 22,17.5 22,15"/>
+          <path d="M24,18.5 C23,26 25,34 23,42 M23,31 C18,29 16,32 19,35 C21,34 23,33 23,31"/>
+        </svg>
+        <h1 class="demo-header__title">Karakuli</h1>
+      </div>
+      <button id="krk-sound-toggle" class="krk-btn krk-btn--ghost" type="button">звук: вкл</button>
+    </div>
+    <p class="krk-hand demo-header__tagline">«бумага, чернила и немного каляк»</p>
+  </header>
+
+  <section class="demo-section">
+    <h2 class="demo-section-heading">Три экрана</h2>
+    <hr class="krk-divider demo-heading-divider" />
+
+    <div class="demo-phones">
+
+      <!-- SCREEN A — «Силы», calm exhaustion tracker -->
+      <div class="demo-phone">
+        <div class="demo-phone__screen">
+          <p style="font-size:var(--krk-text-xl);font-weight:500;">Как ты сегодня?</p>
+          <p class="krk-list-row__meta" style="margin-top:var(--krk-space-1);margin-bottom:var(--krk-space-5);">Сегодня, 17 августа</p>
+
+          <div class="krk-card krk-card--wash-sage">
+            <p style="font-weight:500;margin-bottom:var(--krk-space-4);">Сколько сил осталось?</p>
+            <div class="demo-energy-scale">
+              <label class="demo-energy-item">
+                <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M10,10 C14,10 18,10 20,10 C17,14 13,17 10,20 C14,20 17,20 20,20"/>
+                  <path d="M20,22 C23,22 26,22 27,22 C25,25 22,27 20,29 C23,29 25,29 27,29"/>
+                  <path d="M28,31 C30,31 32,31 33,31 C31,33 29,34 28,36 C30,36 31,36 33,36"/>
+                </svg>
+                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Совсем нет сил" />
+              </label>
+              <label class="demo-energy-item">
+                <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M17,44 C16,30 16,20 18,16 C20,14 28,14 30,16 C32,20 32,30 31,44 C31,45 17,45 17,44"/>
+                  <path d="M24,16 L24,13 M24,13 C21,10 22,5 24,2 C26,5 27,10 24,13"/>
+                  <path d="M28,18 C29,22 28,26 27,24"/>
+                  <path d="M14,8 L12,6 M34,8 L36,6"/>
+                </svg>
+                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Мало сил" />
+              </label>
+              <label class="demo-energy-item">
+                <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M16,22 C15,28 17,33 24,33 C31,33 33,28 32,22 C32,21 16,21 16,22"/>
+                  <path d="M32,24 C37,23 37,29 32,28"/>
+                  <path d="M9,35 C9,33 39,33 39,35 C39,37 9,37 9,35"/>
+                  <path d="M20,19 C22,15 18,12 20,8 M28,19 C30,15 26,12 28,8"/>
+                </svg>
+                <input type="radio" name="krk-energy" class="krk-radio" checked aria-label="Средне" />
+              </label>
+              <label class="demo-energy-item">
+                <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12,41 C16,37 20,36 24,36 C28,36 32,37 36,41"/>
+                  <path d="M24,36 C23,32 24,29 24,26"/>
+                  <path d="M24,26 C19.8,26.3 17.7,24.2 18,20 C22.2,19.7 24.3,21.8 24,26 M24,26 C28.2,26.3 30.3,24.2 30,20 C25.8,19.7 23.7,21.8 24,26"/>
+                  <path d="M16,40 L18,39 M30,39 L32,40"/>
+                </svg>
+                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Много сил" />
+              </label>
+              <label class="demo-energy-item">
+                <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M24,17 C29,16 32,20 31,24 C33,28 29,32 24,31 C19,32 15,28 16,24 C15,19 19,17 24,17"/>
+                  <path d="M24,15 L24,8 M29,17 L34,11 M33,24 L41,24 M29,31 L33,37 M24,33 L24,40 M19,31 L15,36 M16,24 L8,25 M19,17 L14,12"/>
+                </svg>
+                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Полон сил" />
+              </label>
+            </div>
+          </div>
+
+          <button class="krk-btn krk-btn--outline" style="margin-top:var(--krk-space-5);" type="button">Сохранить</button>
+
+          <hr class="krk-divider" />
+        </div>
+        <div class="demo-corner-moon">
+          <svg width="30" height="30" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M28,10 C20,10 14,17 14,24 C14,31 20,38 28,38 C22,35 18,30 18,24 C18,18 22,13 28,10"/>
+            <path d="M34,14 L34,18 M32,16 L36,16 M38,26 L38,29 M36.5,27.5 L39.5,27.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- SCREEN B — «Рецепты», playful -->
+      <div class="demo-phone">
+        <div class="demo-phone__screen krk-dotgrid">
+          <div class="krk-tabs">
+            <button class="krk-tab is-active" type="button">Завтрак</button>
+            <button class="krk-tab" type="button">Обед</button>
+            <button class="krk-tab" type="button">Ужин</button>
+          </div>
+
+          <ul class="krk-list" style="margin-top:var(--krk-space-4);">
+            <li class="krk-list-row">
+              <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Мука</span></label>
+            </li>
+            <li class="krk-list-row">
+              <label class="krk-choice"><input type="checkbox" class="krk-check" /><span>Яйца</span></label>
+            </li>
+            <li class="krk-list-row">
+              <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Творог</span></label>
+            </li>
+            <li class="krk-list-row">
+              <label class="krk-choice"><input type="checkbox" class="krk-check" /><span>Изюм</span></label>
+            </li>
+          </ul>
+
+          <div class="krk-card krk-card--wash-butter" style="margin-top:var(--krk-space-5);">
+            <div class="demo-recipe-card__head">
+              <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12,26 C11,32 14,38 24,38 C34,38 37,32 36,26 C36,24 12,24 12,26"/>
+                <path d="M12,26 C8,25 8,29 12,29 M36,26 C40,25 40,29 36,29"/>
+                <path d="M13,24 C13,20 35,20 35,24 M22,20 C22,17 26,17 26,20"/>
+                <path d="M18,17 C20,14 16,11 18,8 M24,17 C26,13 22,10 24,6 M30,17 C32,14 28,11 30,8"/>
+              </svg>
+              <p style="font-weight:500;font-size:var(--krk-text-lg);">Сырники</p>
+            </div>
+            <p class="krk-list-row__meta" style="margin-top:var(--krk-space-1);">20 минут · просто</p>
+          </div>
+        </div>
+
+        <nav class="krk-pillnav">
+          <button class="krk-pillnav__item" type="button" aria-label="Рецепты">
+            <svg width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10,24 C11,32 17,36 24,36 C31,36 37,32 38,24 C38,23 10,23 10,24"/>
+              <path d="M19,36 C19,39 29,39 29,36"/>
+              <path d="M13,20 C18,17 30,12 40,9 M14,23 C19,20 31,15 41,12"/>
+            </svg>
+          </button>
+          <button class="krk-pillnav__item is-active" type="button" aria-label="Избранное">
+            <svg width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M24,16 C21,10 12,11 12,19 C12,26 19,30 23,37 C25,32 34,27 35,18 C35,11 27,9 24,16"/>
+              <path d="M22,14 C20,12 17,11 14,13"/>
+            </svg>
+          </button>
+          <button class="krk-pillnav__item" type="button" aria-label="Список покупок">
+            <svg width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21,30.8 C25,33 24,37 19.2,38.8 C15,40.3 11.5,40 11,39.2 C10.3,36 10.7,33.5 12.8,31.2 C15.5,28.5 18.5,28.8 21,30.8"/>
+              <path d="M21,30 C26,27 32,22 36,18 C38,16.5 39,17.5 37.5,19"/>
+              <path d="M15,32 C16,33 16.5,34 17,34.5"/>
+              <path d="M30,27 L32,26"/>
+            </svg>
+          </button>
+        </nav>
+      </div>
+
+      <!-- SCREEN C — onboarding colour moment -->
+      <div class="demo-phone">
+        <div class="demo-phone__screen demo-screen-c">
+          <div class="demo-hero">
+            <svg class="krk-boil" width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M 42,168 C 28,148 22,116 30,90 C 34,76 44,64 60,58 C 63,44 70,41 74,56 C 78,43 84,40 88,57 C 92,42 98,39 102,55 C 106,44 112,40 116,57 C 120,43 126,40 130,56 C 134,41 140,44 143,52 C 152,58 163,72 166,92 C 170,116 165,148 154,166 C 148,175 132,178 100,177 C 70,176 50,177 42,168 Z" />
+              <path d="M 62,68 C 75,60 85,60 95,66 C 105,72 115,60 128,64 C 135,66 138,68 140,66" />
+              <path d="M 68,117 L 72,119" />
+              <path d="M 126,115 L 130,117" />
+              <path d="M 75,128 C 78,120 100,118 120,126 C 128,131 122,144 100,145 C 80,146 72,136 75,128 Z" />
+              <path d="M 30,113 C 16,102 6,86 4,68 C 3,60 9,55 15,59" />
+              <path d="M 166,113 C 177,102 184,86 185,68 C 186,60 180,55 174,59" />
+              <path d="M 68,177 C 70,183 78,183 80,177" />
+              <path d="M 115,177 C 117,183 125,183 127,177" />
+              <path d="M 50,19 C 51,23 53,24 56,25 C 53,26 51,27 50,31 C 49,27 47,26 44,25 C 47,24 49,23 50,19 Z M 150,19 C 151,23 153,24 156,25 C 153,26 151,27 150,31 C 149,27 147,26 144,25 C 147,24 149,23 150,19 Z M 100,14 C 101,17 103,18 106,19 C 103,20 101,21 100,25 C 99,21 97,20 94,19 C 97,18 99,17 100,14 Z" />
+            </svg>
+          </div>
+
+          <p class="krk-hand" style="font-size:var(--krk-text-2xl);">Всё получится!</p>
+
+          <div class="krk-moment demo-moment-grid">
+            <span class="krk-bloom krk-doodle-blue">
+              <svg width="36" height="36" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M24,13 C25.3,10.7 24.9,8.5 23,6.5 C21.7,8.8 22.1,11 24,13 M26,14 C29,13.6 31,11.9 32,9 C29,9.4 27,11.1 26,14 M26.5,17 C28.2,19.2 30.4,19.9 33,19 C31.3,16.8 29.1,16.1 26.5,17 M25,18.5 C24.5,21.3 25.6,23.5 28,25 C28.5,22.2 27.4,20 25,18.5 M22,18 C19.1,19 17.4,21 17,24 C19.9,23 21.6,21 22,18 M21,16 C18.9,14.1 16.5,13.8 14,15 C16.1,16.9 18.5,17.3 21,16"/>
+                <path d="M22,15 C22,13 26,13 26,15 C26,17.5 22,17.5 22,15"/>
+                <path d="M24,18.5 C23,26 25,34 23,42 M23,31 C18,29 16,32 19,35 C21,34 23,33 23,31"/>
+              </svg>
+            </span>
+            <span class="krk-bloom krk-doodle-pink">
+              <svg width="36" height="36" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18,24 C16,18 15,12 17,10 C19,13 20,15 21,16 C22,12 23,9 24,8 C25,9 26,12 27,16 C28,15 29,13 31,10 C33,12 32,18 30,24 C27,26 21,26 18.5,23"/>
+                <path d="M24,23 C22,30 26,35 23,41"/>
+                <path d="M21,39 C15,36 10,28 12,18 C16,24 20,30 21,39 M25,38 C31,35 36,27 35,19 C31,25 26,31 25,38"/>
+              </svg>
+            </span>
+            <span class="krk-bloom krk-doodle-orange">
+              <svg width="36" height="36" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M24,7 C27,13 28,17 29,20 C34,20 38,20 41,21 C36,24 33,27 31,29 C33,34 34,38 35,41 C30,38 27,35 24,33 C21,35 18,38 13,41 C14,38 15,34 17,29 C15,27 12,24 7,21 C10,20 14,20 19,20 C20,17 22,13 24,7 C24,6 25,6 26,8"/>
+                <path d="M24,8 C25,11 26,15 27,17"/>
+              </svg>
+            </span>
+            <span class="krk-bloom krk-doodle-green">
+              <svg width="36" height="36" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M24,8 C34,14 36,28 24,42 C12,28 14,14 24,8"/>
+                <path d="M24,11 C23,20 25,30 24,39"/>
+                <path d="M24,17 C27,16 30,17 31,19 M24,23 C20,22 17,23 16,25 M24,29 C27,28 30,29 31,31 M24,34 C21,33 18,34 17,36"/>
+              </svg>
+            </span>
+            <span class="krk-bloom krk-doodle-blue">
+              <svg width="36" height="36" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M24,9 C25,16 21,19 27,21 C33,22 37,23 39,24 C37,25 33,26 27,27 C21,29 25,32 24,39 C23,32 27,29 21,27 C15,26 11,25 9,24 C11,23 15,22 21,21 C27,19 23,16 24,9"/>
+                <path d="M34,14 L34,14.4 M12,32 L12,32.4"/>
+              </svg>
+            </span>
+            <span class="krk-bloom krk-doodle-pink">
+              <svg width="36" height="36" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M24,16 C21,10 12,11 12,19 C12,26 19,30 23,37 C25,32 34,27 35,18 C35,11 27,9 24,16"/>
+                <path d="M22,14 C20,12 17,11 14,13"/>
+              </svg>
+            </span>
+          </div>
+
+          <button id="krk-cta-start" class="krk-btn krk-btn--primary krk-arrow-inline" type="button">Начать</button>
+          <p class="krk-list-row__meta">цвет — только по праздникам</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2 class="demo-section-heading">Витрина</h2>
+    <hr class="krk-divider demo-heading-divider" />
+
+    <h3 class="demo-subheading">Цвет</h3>
+    <div class="demo-swatch-row">
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-paper);"></span><span class="krk-list-row__meta">paper</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-paper-2);"></span><span class="krk-list-row__meta">paper-2</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-ink);"></span><span class="krk-list-row__meta">ink</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-ink-soft);"></span><span class="krk-list-row__meta">ink-soft</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-ink-faint);"></span><span class="krk-list-row__meta">ink-faint</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-pen-blue);"></span><span class="krk-list-row__meta">pen-blue</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-pen-green);"></span><span class="krk-list-row__meta">pen-green</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-pen-orange);"></span><span class="krk-list-row__meta">pen-orange</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-pen-pink);"></span><span class="krk-list-row__meta">pen-pink</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-wash-lavender);"></span><span class="krk-list-row__meta">wash-lavender</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-wash-sage);"></span><span class="krk-list-row__meta">wash-sage</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-wash-blush);"></span><span class="krk-list-row__meta">wash-blush</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-wash-butter);"></span><span class="krk-list-row__meta">wash-butter</span></div>
+      <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-danger);"></span><span class="krk-list-row__meta">danger</span></div>
+    </div>
+
+    <h3 class="demo-subheading">Типографика</h3>
+    <div class="demo-type-specimen">
+      <p style="font-size:var(--krk-text-3xl);font-weight:700;">Съешь ещё этих мягких булок</p>
+      <p style="font-size:var(--krk-text-2xl);font-weight:700;">Да выпей же чаю на веранде</p>
+      <p style="font-size:var(--krk-text-xl);font-weight:500;">Съешь ещё этих мягких французских булок</p>
+      <p style="font-size:var(--krk-text-base);">Съешь ещё этих мягких французских булок, да выпей же чаю — фраза, в которой встречаются все буквы русского алфавита, поэтому такими предложениями удобно проверять кириллицу шрифта.</p>
+      <p class="krk-list-row__meta">Съешь ещё этих мягких французских булок · 14px · ink-soft</p>
+      <p class="krk-hand" style="font-size:var(--krk-text-lg);">Съешь ещё этих мягких французских булок, да выпей же чаю</p>
+    </div>
+
+    <h3 class="demo-subheading">Кнопки</h3>
+    <div class="demo-buttons-row">
+      <button class="krk-btn krk-btn--primary" type="button">Primary</button>
+      <button class="krk-btn krk-btn--outline" type="button">Outline</button>
+      <button class="krk-btn krk-btn--ghost" type="button">Ghost</button>
+      <button class="krk-btn krk-btn--wobbly" type="button">Wobbly</button>
+      <button class="krk-btn krk-btn--primary krk-btn--danger" type="button">Удалить</button>
+    </div>
+
+    <h3 class="demo-subheading">Форма</h3>
+    <div class="demo-form-row">
+      <div class="krk-field demo-field">
+        <label class="krk-label" for="demo-input-name">Имя</label>
+        <input id="demo-input-name" class="krk-input" type="text" placeholder="Как тебя зовут?" />
+      </div>
+      <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Напоминания</span></label>
+      <div class="demo-radio-pair">
+        <label class="krk-choice"><input type="radio" name="demo-time" class="krk-radio" checked /><span>Утро</span></label>
+        <label class="krk-choice"><input type="radio" name="demo-time" class="krk-radio" /><span>Вечер</span></label>
+      </div>
+      <label class="krk-choice"><input type="checkbox" class="krk-toggle" checked /><span>Звук</span></label>
+    </div>
+
+    <hr class="krk-divider" />
+
+    <h3 class="demo-subheading">Мотивы</h3>
+    <div class="demo-motif-grid">
+      <div class="demo-motif-item"><img src="../doodles/arrow-right.svg" width="44" height="44" alt="arrow-right" /><span>arrow-right</span></div>
+      <div class="demo-motif-item"><img src="../doodles/bowl.svg" width="44" height="44" alt="bowl" /><span>bowl</span></div>
+      <div class="demo-motif-item"><img src="../doodles/candle.svg" width="44" height="44" alt="candle" /><span>candle</span></div>
+      <div class="demo-motif-item"><img src="../doodles/check.svg" width="44" height="44" alt="check" /><span>check</span></div>
+      <div class="demo-motif-item"><img src="../doodles/cloud.svg" width="44" height="44" alt="cloud" /><span>cloud</span></div>
+      <div class="demo-motif-item"><img src="../doodles/cup-tea.svg" width="44" height="44" alt="cup-tea" /><span>cup-tea</span></div>
+      <div class="demo-motif-item"><img src="../doodles/flower-daisy.svg" width="44" height="44" alt="flower-daisy" /><span>flower-daisy</span></div>
+      <div class="demo-motif-item"><img src="../doodles/flower-tulip.svg" width="44" height="44" alt="flower-tulip" /><span>flower-tulip</span></div>
+      <div class="demo-motif-item"><img src="../doodles/heart.svg" width="44" height="44" alt="heart" /><span>heart</span></div>
+      <div class="demo-motif-item"><img src="../doodles/leaf.svg" width="44" height="44" alt="leaf" /><span>leaf</span></div>
+      <div class="demo-motif-item"><img src="../doodles/moon.svg" width="44" height="44" alt="moon" /><span>moon</span></div>
+      <div class="demo-motif-item"><img src="../doodles/pot.svg" width="44" height="44" alt="pot" /><span>pot</span></div>
+      <div class="demo-motif-item"><img src="../doodles/spark.svg" width="44" height="44" alt="spark" /><span>spark</span></div>
+      <div class="demo-motif-item"><img src="../doodles/spoon.svg" width="44" height="44" alt="spoon" /><span>spoon</span></div>
+      <div class="demo-motif-item"><img src="../doodles/sprout.svg" width="44" height="44" alt="sprout" /><span>sprout</span></div>
+      <div class="demo-motif-item"><img src="../doodles/squiggle.svg" width="44" height="44" alt="squiggle" /><span>squiggle</span></div>
+      <div class="demo-motif-item"><img src="../doodles/star.svg" width="44" height="44" alt="star" /><span>star</span></div>
+      <div class="demo-motif-item"><img src="../doodles/sun.svg" width="44" height="44" alt="sun" /><span>sun</span></div>
+      <div class="demo-motif-item"><img src="../doodles/tree.svg" width="44" height="44" alt="tree" /><span>tree</span></div>
+      <div class="demo-motif-item"><img src="../doodles/zzz.svg" width="44" height="44" alt="zzz" /><span>zzz</span></div>
+    </div>
+
+    <h3 class="demo-subheading">Персонажи</h3>
+    <div class="demo-character-grid">
+      <div class="demo-character-group">
+        <p class="demo-character-group__name">Улитка</p>
+        <div class="demo-character-group__images">
+          <img src="../characters/ulitka-idle.svg" alt="улитка, спокойна" />
+          <img src="../characters/ulitka-happy.svg" alt="улитка радуется" />
+        </div>
+      </div>
+      <div class="demo-character-group">
+        <p class="demo-character-group__name">Батон</p>
+        <div class="demo-character-group__images">
+          <img src="../characters/baton-idle.svg" alt="батон, спокоен" />
+          <img src="../characters/baton-sleep.svg" alt="батон спит" />
+        </div>
+      </div>
+      <div class="demo-character-group">
+        <p class="demo-character-group__name">Пельмень</p>
+        <div class="demo-character-group__images">
+          <img src="../characters/pelmen-idle.svg" alt="пельмень, спокоен" />
+          <img src="../characters/pelmen-cheer.svg" alt="пельмень радуется" />
+        </div>
+      </div>
+    </div>
+    <p class="krk-hand" style="margin-top:var(--krk-space-3);">выбери одного-двух :)</p>
+  </section>
+
+  <p class="krk-list-row__meta demo-footer">Karakuli v1 · бумага, чернила, каляки</p>
+
+  <script type="module">
+    // Defensive sound wiring: sound.js may still be in progress in a
+    // sibling worktree, and uisfx may not be installed at all. Any
+    // failure here degrades to a silent, fully-functional page — see
+    // STYLE.md §7 / web/sound.js for the doctrine this follows.
+    (async () => {
+      const soundToggle = document.getElementById('krk-sound-toggle');
+      let enabled = true;
+
+      try {
+        const { initKarakuliSound, KRK_CUES } = await import('../web/sound.js');
+        const krk = initKarakuliSound({ energy: 'playful' });
+
+        document.addEventListener('click', (event) => {
+          const btn = event.target.closest('.krk-btn');
+          if (!btn) return;
+          if (btn.id === 'krk-cta-start') {
+            krk.play(KRK_CUES.moment);
+            return;
+          }
+          if (btn.id === 'krk-sound-toggle') return;
+          krk.play(KRK_CUES.tap);
+        });
+
+        document.querySelectorAll('.krk-check').forEach((el) => {
+          el.addEventListener('change', () => krk.play(KRK_CUES.confirm));
+        });
+
+        soundToggle?.addEventListener('click', () => {
+          enabled = !enabled;
+          krk.setEnabled(enabled);
+          soundToggle.textContent = enabled ? 'звук: вкл' : 'звук: выкл';
+        });
+      } catch {
+        // sound.js missing/incomplete or uisfx unavailable — hide the
+        // toggle rather than show a control that does nothing.
+        if (soundToggle) soundToggle.style.display = 'none';
+      }
+    })();
+  </script>
+
+</body>
+</html>
