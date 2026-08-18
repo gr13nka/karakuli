@@ -11,11 +11,6 @@
  * animation-delay — set it per element with web/anim.js's krkStagger()
  * for a staggered group, or leave it unset for an immediate 0ms.
  *
- * Reduced motion: no local `prefers-reduced-motion` block here on purpose.
- * tokens.css already collapses every animation/transition duration to ~0
- * globally — not a per-component opt-out, the same guard karakuli.css's
- * .krk-bloom relies on instead of duplicating it.
- *
  * Usage:
  *   <span class="krk-enter-sprout">…doodle…</span>
  *   <span class="krk-enter-draw">…icon svg, every <path pathLength="100">…</span>
@@ -26,7 +21,7 @@
 
 .krk-enter-sprout {
   transform-origin: 50% 100%;
-  animation: krk-enter-sprout 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: krk-enter-sprout 300ms var(--krk-motion-bounce) both;
   animation-delay: var(--krk-enter-delay, 0ms);
 }
 
@@ -70,7 +65,7 @@
    separately — the two target different elements and compose cleanly. */
 
 .krk-enter-rise {
-  animation: krk-enter-rise 220ms var(--krk-motion-ease) both;
+  animation: krk-enter-rise 220ms var(--krk-motion-bounce) both;
   animation-delay: var(--krk-enter-delay, 0ms);
 }
 

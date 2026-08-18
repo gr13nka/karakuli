@@ -13,12 +13,6 @@
  *      comes from web/tokens.css.
  *   2. The non-canon `.krk-enter-*` variants (pop, flip-pop, fade) — same
  *      shape as the promoted ones, just never left this file.
- *
- * Reduced motion: no local `prefers-reduced-motion` block here on purpose.
- * tokens.css already collapses every animation/transition duration to
- * ~0 globally (not a per-component opt-out — see its comment and the
- * matching note at the bottom of karakuli.css). Duplicating that guard
- * here would just be two places deciding the same thing.
  */
 
 *, *::before, *::after { box-sizing: border-box; }

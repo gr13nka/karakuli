@@ -27,6 +27,27 @@ Two sections:
 
 ## Log
 
+### 2026-08-18
+
+#### Motion — reduced-motion guard removed entirely, movement gets an overshoot
+
+The global `prefers-reduced-motion` guard is gone: removed from `tokens.css`, `boil.css`, `boil.js`, `karakuli.css`, `anim.css`, `demo/motion.css`, the Compose mapping, `STYLE.md` and the skill. Karakuli now animates for everyone — boil keeps boiling, entrances keep playing, transitions keep their full duration, on every platform. Alongside it, anything that **moves or scales** now uses `--krk-motion-bounce` (`cubic-bezier(0.34, 1.56, 0.64, 1)`, promoted to a token from the curve `.krk-enter-sprout` was already using inline); colour and opacity keep `ease-out`, where an overshoot has nothing to overshoot into.
+
+The user asked for this directly and reaffirmed it after being told what it costs: `prefers-reduced-motion` is the signal people with vestibular disorders, migraine triggers, and motion sensitivity use to make interfaces usable, and ignoring it means the system animates at users who have explicitly asked their OS not to. That trade was made knowingly, in favour of the motion feeling "smooth and bouncy" everywhere. It is recorded here rather than left implicit precisely because it's the kind of call a future reader would otherwise assume was an oversight and silently "fix" — the canon now says don't reintroduce a guard without the user's say-so.
+
+Rejected on the way: a component-scoped carve-out that kept the guard globally but exempted the sliding screen selector (the user rejected the narrow version twice and asked for the note removed "completely").
+
+### 2026-08-18
+
+#### Sliding screen selector — `.krk-pillnav--slider`
+
+The pill nav gains a variant where a single accent-filled capsule travels to the chosen screen instead of each item lighting up in place. Every item keeps its doodle at all times; the capsule arriving under it is what marks the screen, and the doodle flips to paper as it does. Chosen by the user from a reference screenshot after being shown the alternatives: a wash-filled capsule (rejected — too faint to read as the selection marker) and inactive items collapsing to dots (rejected — the user wanted every screen legible at rest, not just the current one). The capsule is a separate element rather than a styled item, because only a continuously positioned element can move *between* items; `web/pillnav.js` owns where it is, CSS owns how it looks.
+
+#### Sound — navigation is silent, with one sanctioned exception
+
+`slide` (uisfx `drag-start`, zen's soft brush) plays as the sliding selector's capsule travels. This is a deliberate carve-out from the standing rule that sound never plays on plain navigation: the rule stands everywhere else, but here the capsule's movement *is* the state change, so the cue rides the motion instead of announcing a route change. The user asked for a "swipe" sound; the zen pack has no swipe cue, and `drag-start` is its nearest brush-like texture — it shares that cue with `pick`, the way `radio` and `holdEnd` already share `release`. Note for call sites: the energy dial swallows this cue in a calm app, so a nav that needs to be heard must be mounted in a playful one.
+
+
 ### 2026-08-17
 
 #### Entrance animations — sprout+scatter (doodles), draw+rise (cards)

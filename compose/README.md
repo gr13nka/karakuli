@@ -52,11 +52,14 @@ perfect) and swapping the displayed `ImageVector` on a fixed ~150ms timer. Do no
 drive the boil with a runtime filter or transform — it should look like the pen
 re-drew the line, not like the image is being warped.
 
-Respect the system's reduce-motion setting: check
-`Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f)`
-and freeze on the first frame when it's `0f`. This also applies to
-`KarakuliCheckMark`'s draw-in animation — `animateFloatAsState` doesn't read the
-system setting automatically, so gate it the same way if strict compliance matters.
+Karakuli has no reduce-motion guard, on web or here: the boil keeps running and
+`KarakuliCheckMark` keeps drawing in regardless of `ANIMATOR_DURATION_SCALE`. That
+removal was deliberate (see `DECISIONS.md`) — don't gate these on the system setting
+without the user's say-so.
+
+Motion that moves or scales uses the overshoot curve, Compose's equivalent of
+`--krk-motion-bounce`: `tween(durationMillis = 250, easing = CubicBezierEasing(0.34f,
+1.56f, 0.64f, 1f))`. Colour and opacity keep a plain `FastOutSlowInEasing`.
 
 ## Sound (Android)
 

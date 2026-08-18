@@ -310,10 +310,8 @@ fun KarakuliCheckMark(
     color: Color = KarakuliColors.Ink,
     size: Dp = 20.dp,
 ) {
-    // Compose's animateFloatAsState does not automatically respect the system's
-    // "disable animations" toggle (unlike View-based Animators) — apps with a strict
-    // reduce-motion requirement should branch to tween(durationMillis = 0) when disabled.
-    // See README "motion" for the equivalent gate on the boil effect.
+    // No reduce-motion gate here on purpose — Karakuli animates for everyone
+    // (see DECISIONS.md); don't branch this on ANIMATOR_DURATION_SCALE.
     val progress by animateFloatAsState(
         targetValue = if (checked) 1f else 0f,
         animationSpec = tween(durationMillis = 200), // quiet motion: 150-250ms per the contract

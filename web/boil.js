@@ -15,9 +15,6 @@
  *   - add class="krk-crayon" for a static grain pass on hero strokes
  * The animation/class rules live in web/boil.css and require these defs
  * to exist — load both, in either order.
- *
- * Does nothing if the user has requested reduced motion: no defs are
- * injected, so filter: url(#krk-boil-N) simply resolves to nothing.
  */
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -61,7 +58,6 @@ function crayonFilter() {
 
 export function injectBoilFilters() {
   if (document.getElementById('krk-boil-defs')) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('id', 'krk-boil-defs');

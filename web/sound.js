@@ -24,7 +24,10 @@
 // for affirmative completions (not per-checkbox ticks — 'success' read as
 // an unpleasant chime there). `pick`/`unpick`/`radio` are the user's by-ear
 // picks for checking/unchecking a checkbox and selecting a radio option, and
-// are provisional pending further tuning. IMPORTANT: uisfx's cue catalog
+// are provisional pending further tuning. `slide` is the sliding screen
+// selector's travel cue — zen's soft brush, the nearest thing the pack has
+// to a swipe; it shares 'drag-start' with `pick` deliberately, the way
+// `radio` and `holdEnd` already share 'release'. IMPORTANT: uisfx's cue catalog
 // has no 'click' cue — using it plays nothing, which is how tap ended up
 // silent — so never reintroduce 'click' here.
 export const KRK_CUES = {
@@ -34,6 +37,7 @@ export const KRK_CUES = {
   pick: 'drag-start',
   unpick: 'invalid-drop',
   radio: 'release',
+  slide: 'drag-start',
   confirm: 'success',
   done: 'complete',
   warn: 'warning',

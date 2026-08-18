@@ -134,12 +134,21 @@ Everything else — text alignment, spacing, iconography outside of doodle icons
 - **Inputs** are quiet: paper-2 background, 1.5px ink-faint border that shifts to ink on focus, asymmetric radius, and the mandatory visible focus outline.
 - **Cards** use paper-2 or a wash background, asymmetric radius, and a 1.5px border — no drop shadow, ever, on a card.
 
+**Sliding screen selector** (`.krk-pillnav--slider`, the bottom-of-screen nav) — Karakuli's screen switcher, a variant of the plain pill nav:
+
+- **One filled marker travels.** A single tile in the app accent slides to the chosen screen; it is the only marker of what's selected. Items never light up in place, and nothing collapses to a dot — every screen keeps its doodle at all times, so the whole set stays readable at rest. The doodle under the marker flips to paper as it arrives.
+- **Nothing in it is a pill or an ellipse.** The bar is a barely-rounded rectangle, the marker a rounded rect slightly wider than tall (roughly 1.25:1). This overrides the base `.krk-pillnav` pill shape deliberately.
+- **The marker's corners are pushed past the usual asymmetry** — every corner disagrees with the others, and horizontal and vertical radii differ within each corner, so the fill reads as drawn rather than stamped. This is item 5 above at full strength, the same move as the wobbly button.
+- **It moves on `--krk-motion-bounce`** over 250ms, settling with a small overshoot.
+- **It is the one navigation that makes a sound** — see §7.
+
+Implementation: `web/karakuli.css` plus `web/pillnav.js` (`initKarakuliPillnav()`), which owns only where the marker is; CSS owns how it looks.
+
 ### Hard rules (apply everywhere, no exceptions)
 
 - Never pure `#000000` or pure `#FFFFFF` anywhere in the system.
 - No box-shadows, with exactly one exception: a single soft shadow is permitted on modals, to lift them off the page.
 - Every interactive element keeps a visible focus state: `outline: 2px solid var(--krk-accent); outline-offset: 2px;`. This is not optional and not replaced by a colour change alone.
-- All boil/wiggle animation is disabled under `prefers-reduced-motion: reduce` (see §7).
 
 ### Spacing & radius
 
@@ -180,9 +189,9 @@ Karakuli's illustrations are alive in a small, specific way: key doodles get a s
 - Frames are switched with a `steps()` CSS animation, not a smooth animation — the point is the discrete redraw-by-redraw feel of traditional boil, not a fluid wobble.
 - Reserved for **key illustrations** (heroes, characters, celebration doodles) — not applied wholesale to every icon in the UI. An interface where everything boils constantly is distracting, not alive.
 
-**UI transitions** (unrelated to boil): quiet and fast — 150ms (`--krk-motion-fast`) to 250ms (`--krk-motion-slow`), eased with `ease-out` (`--krk-motion-ease`). Panels, modals, and state changes should feel immediate, not performative.
+**UI transitions** (unrelated to boil): 150ms (`--krk-motion-fast`) to 250ms (`--krk-motion-slow`). Colour and opacity ease with `ease-out` (`--krk-motion-ease`); anything that **moves or scales** uses the overshoot curve `--krk-motion-bounce` (`cubic-bezier(0.34, 1.56, 0.64, 1)`) so it settles with a small bounce rather than stopping dead. Motion is smooth and springy, not performative — the overshoot is a few pixels, not a flourish.
 
-**Reduced motion:** under `prefers-reduced-motion: reduce`, boil filters are disabled entirely (illustrations render as static, clean line art) and UI transition durations collapse to effectively instant. This is a global guard, not a per-component opt-out — see `tokens.css`.
+**No reduced-motion guard.** Karakuli deliberately animates for everyone: there is no `prefers-reduced-motion` block in `tokens.css`, no boil opt-out, and no per-component carve-out. Don't reintroduce one without the user's say-so — its removal was a deliberate call (see `DECISIONS.md`), and the accessibility cost was accepted knowingly.
 
 ### Entrances
 
@@ -190,10 +199,9 @@ Entrances are how things arrive on screen for the first time. The doctrine below
 
 1. **Doodles and illustrations sprout.** `.krk-enter-sprout` grows an element up from the ground — transform-origin at the base, `scaleY` 0.25 → 1.05 → 1, ~300ms, a slight overshoot then settle.
 2. **A field of doodles enters as one organic burst, not a sweep.** A garden or a scatter of motifs uses `krkStagger(container, { mode: 'scatter' })` (in `web/anim.js`), which staggers each element by an independent random delay within a ~450ms window, applied via the `--krk-enter-delay` custom property. This is deliberately not a sequential left-to-right sweep — the reference pops everything near-simultaneously, and a sweep reads mechanical.
-3. **Cards and list rows enter with draw+rise.** The row itself uses `.krk-enter-rise` (`translateY` 10px → 0 + fade, 220ms `ease-out`), staggered in a wave (`krkStagger(..., { mode: 'wave' })`, ~60–70ms per row), while the row's doodle icon self-draws with `.krk-enter-draw` (`stroke-dashoffset` 100 → 0 over 450ms, then a subtle settle). Inlined SVG paths need `pathLength="100"` for the draw to line up correctly.
+3. **Cards and list rows enter with draw+rise.** The row itself uses `.krk-enter-rise` (`translateY` 10px → 0 + fade, 220ms on `--krk-motion-bounce`), staggered in a wave (`krkStagger(..., { mode: 'wave' })`, ~60–70ms per row), while the row's doodle icon self-draws with `.krk-enter-draw` (`stroke-dashoffset` 100 → 0 over 450ms, then a subtle settle). Inlined SVG paths need `pathLength="100"` for the draw to line up correctly.
 4. **Entrances mark first appearance only** — screen load, a section revealing, items being added — never hover, focus, or routine state flips. The 150–250ms UI-transition doctrine above is unchanged and covers those cases instead.
-5. **Reduced motion** collapses every entrance to its instant final state, under the same global guard as boil and UI transitions.
-6. **Boil scope:** a doodle field or garden counts as one key illustration, so boiling all its motifs together is sanctioned — the ban on boiling every UI icon individually still stands. Practically, boil's ~2px displacement is invisible below roughly 40px render size: render boiling doodles large enough to actually show it, or don't promise a boil that won't read.
+5. **Boil scope:** a doodle field or garden counts as one key illustration, so boiling all its motifs together is sanctioned — the ban on boiling every UI icon individually still stands. Practically, boil's ~2px displacement is invisible below roughly 40px render size: render boiling doodles large enough to actually show it, or don't promise a boil that won't read.
 
 ---
 
@@ -213,6 +221,7 @@ Karakuli has an official sound layer, built on [uisfx](https://github.com/romain
 | Checkbox / toggle turns on | `pick` | `drag-start` |
 | Checkbox / toggle turns off | `unpick` | `invalid-drop` |
 | Radio / option select | `radio` | `release` — provisional; shares a cue with hold-release. The user noticed the overlap and kept it for now (see `DECISIONS.md` Unsettled). |
+| Sliding screen selector travels | `slide` | `drag-start` — zen's soft brush, the nearest thing the pack has to a swipe; shares a cue with `pick`. |
 | Whole task or flow finished | `done` | `complete` |
 | Affirmative completion / confirmation | `confirm` | `success` — **not** for per-checkbox ticks; that chime was tried on checkbox-on and rejected as unpleasant, hence `pick` → `drag-start` above. |
 | Destructive confirm shown | `warn` | `warning` |
@@ -223,7 +232,7 @@ Karakuli has an official sound layer, built on [uisfx](https://github.com/romain
 
 **Caution:** `'click'` is **not** a valid uisfx cue — playing it does nothing, and that silent failure shipped once as a real bug (buttons went fully silent) before it was caught. Don't reintroduce it. The full uisfx catalog is 78 cues across 13 categories at [uisfx.com](https://uisfx.com) — check there rather than guessing a name.
 
-**Never** play a sound on hover, on scroll, on every keystroke, or on plain navigation. If it isn't a meaningful state change, it stays silent.
+**Never** play a sound on hover, on scroll, or on every keystroke. If it isn't a meaningful state change, it stays silent. Navigation is silent too, with one sanctioned exception: the sliding screen selector (`.krk-pillnav--slider`) plays `slide` as its marker travels — there the movement *is* the state change, and the cue rides the motion rather than announcing a route change.
 
 **Energy dial applies to sound too** (see §8): a calm app (meditation, exhaustion tracker) plays only `success` / `complete` / `error` / `warning`; a playful app may use the full mapping above.
 
@@ -273,7 +282,7 @@ Both are intentionally rationed to a small number of high-value moments, not spr
 | Set Shantell Sans for short, felt lines | Set a paragraph of body text in Shantell Sans |
 | Give every interactive element a visible focus outline | Rely on a colour or shadow change alone to signal focus |
 | Let boil animate a handful of key illustrations | Apply boil to every icon in the UI simultaneously |
-| Disable all animation under `prefers-reduced-motion` | Ship a boil or wiggle effect with no reduced-motion guard |
+| Use `--krk-motion-bounce` for anything that moves or scales | Reintroduce a `prefers-reduced-motion` guard on your own initiative |
 
 ---
 

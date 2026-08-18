@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Karakuli — переключатель экранов</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Orca's embedded browser caches these across reloads and ignores the
+       server's Cache-Control: no-store, so a plain reload keeps showing stale
+       styling while iterating on the design. Stamping each URL forces a fresh
+       fetch every load. Demo-page workaround — not something canon pages do. -->
+  <script>
+    window.__krkBust = Date.now();
+    for (const href of ["../web/tokens.css", "../web/karakuli.css"]) {
+      document.write(`<link rel="stylesheet" href="${href}?t=${window.__krkBust}">`);
+    }
+  </script>
+
+  <!-- Served over http, never file:// — pillnav.js is an ES module. -->
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      gap: var(--krk-space-6);
+      padding: var(--krk-space-6);
+      background: var(--krk-paper);
+      font-family: var(--krk-font-sans);
+    }
+
+    /* This demo's accent knob: one pen bright, per STYLE.md §8. */
+    .phone {
+      --krk-accent: var(--krk-pen-blue);
+      position: relative;
+      width: 300px;
+      height: 560px;
+      overflow: hidden;
+      background: var(--krk-paper);
+      border: 1.5px solid var(--krk-ink);
+      border-radius: 28px 30px 27px 29px / 30px 27px 30px 28px;
+    }
+
+    /* The component is viewport-fixed by default; inside a phone frame it
+       has to anchor to the frame instead. */
+    .phone .krk-pillnav {
+      position: absolute;
+      bottom: var(--krk-space-4);
+    }
+
+    .screen {
+      display: none;
+      height: 100%;
+      box-sizing: border-box;
+      padding: var(--krk-space-6) var(--krk-space-5);
+      text-align: center;
+    }
+
+    .screen.is-shown {
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: var(--krk-space-3);
+    }
+
+    .screen svg {
+      width: 96px;
+      height: 96px;
+      color: var(--krk-accent);
+    }
+
+    .screen h2 {
+      margin: 0;
+      font-size: var(--krk-text-xl);
+      color: var(--krk-ink);
+    }
+
+    .screen p {
+      margin: 0;
+      max-width: 22ch;
+      font-size: var(--krk-text-sm);
+      font-weight: 500;
+      color: var(--krk-ink-soft);
+    }
+
+    .caption {
+      max-width: 46ch;
+      text-align: center;
+      font-size: var(--krk-text-sm);
+      font-weight: 500;
+      color: var(--krk-ink-soft);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone">
+    <section class="screen is-shown" data-screen-panel="garden">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24,13 C25.3,10.7 24.9,8.5 23,6.5 C21.7,8.8 22.1,11 24,13 M26,14 C29,13.6 31,11.9 32,9 C29,9.4 27,11.1 26,14 M26.5,17 C28.2,19.2 30.4,19.9 33,19 C31.3,16.8 29.1,16.1 26.5,17 M25,18.5 C24.5,21.3 25.6,23.5 28,25 C28.5,22.2 27.4,20 25,18.5 M22,18 C19.1,19 17.4,21 17,24 C19.9,23 21.6,21 22,18 M21,16 C18.9,14.1 16.5,13.8 14,15 C16.1,16.9 18.5,17.3 21,16"/>
+        <path d="M22,15 C22,13 26,13 26,15 C26,17.5 22,17.5 22,15"/>
+        <path d="M24,18.5 C23,26 25,34 23,42 M23,31 C18,29 16,32 19,35 C21,34 23,33 23,31"/>
+      </svg>
+      <h2>Сад</h2>
+      <p>Здесь растёт всё, что вы успели за неделю.</p>
+    </section>
+
+    <section class="screen" data-screen-panel="sprout">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12,41 C16,37 20,36 24,36 C28,36 32,37 36,41"/>
+        <path d="M24,36 C23,32 24,29 24,26"/>
+        <path d="M24,26 C19.8,26.3 17.7,24.2 18,20 C22.2,19.7 24.3,21.8 24,26 M24,26 C28.2,26.3 30.3,24.2 30,20 C25.8,19.7 23.7,21.8 24,26"/>
+        <path d="M16,40 L18,39 M30,39 L32,40"/>
+      </svg>
+      <h2>Ростки</h2>
+      <p>Маленькие привычки, которые пока только начинаются.</p>
+    </section>
+
+    <section class="screen" data-screen-panel="tea">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16,22 C15,28 17,33 24,33 C31,33 33,28 32,22 C32,21 16,21 16,22"/>
+        <path d="M32,24 C37,23 37,29 32,28"/>
+        <path d="M9,35 C9,33 39,33 39,35 C39,37 9,37 9,35"/>
+        <path d="M20,19 C22,15 18,12 20,8 M28,19 C30,15 26,12 28,8"/>
+      </svg>
+      <h2>Пауза</h2>
+      <p>Пять минут тишины и чашка чая.</p>
+    </section>
+
+    <nav class="krk-pillnav krk-pillnav--slider" id="nav" aria-label="Экраны">
+      <button class="krk-pillnav__item is-active" data-screen="garden" aria-label="Сад">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M24,13 C25.3,10.7 24.9,8.5 23,6.5 C21.7,8.8 22.1,11 24,13 M26,14 C29,13.6 31,11.9 32,9 C29,9.4 27,11.1 26,14 M26.5,17 C28.2,19.2 30.4,19.9 33,19 C31.3,16.8 29.1,16.1 26.5,17 M25,18.5 C24.5,21.3 25.6,23.5 28,25 C28.5,22.2 27.4,20 25,18.5 M22,18 C19.1,19 17.4,21 17,24 C19.9,23 21.6,21 22,18 M21,16 C18.9,14.1 16.5,13.8 14,15 C16.1,16.9 18.5,17.3 21,16"/>
+          <path d="M22,15 C22,13 26,13 26,15 C26,17.5 22,17.5 22,15"/>
+          <path d="M24,18.5 C23,26 25,34 23,42 M23,31 C18,29 16,32 19,35 C21,34 23,33 23,31"/>
+        </svg>
+      </button>
+      <button class="krk-pillnav__item" data-screen="sprout" aria-label="Ростки">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12,41 C16,37 20,36 24,36 C28,36 32,37 36,41"/>
+          <path d="M24,36 C23,32 24,29 24,26"/>
+          <path d="M24,26 C19.8,26.3 17.7,24.2 18,20 C22.2,19.7 24.3,21.8 24,26 M24,26 C28.2,26.3 30.3,24.2 30,20 C25.8,19.7 23.7,21.8 24,26"/>
+          <path d="M16,40 L18,39 M30,39 L32,40"/>
+        </svg>
+      </button>
+      <button class="krk-pillnav__item" data-screen="tea" aria-label="Пауза">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16,22 C15,28 17,33 24,33 C31,33 33,28 32,22 C32,21 16,21 16,22"/>
+          <path d="M32,24 C37,23 37,29 32,28"/>
+          <path d="M9,35 C9,33 39,33 39,35 C39,37 9,37 9,35"/>
+          <path d="M20,19 C22,15 18,12 20,8 M28,19 C30,15 26,12 28,8"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+
+  <p class="caption">
+    Плашка — единственный маркер выбранного экрана: она едет к нему,
+    а каракуля остаётся на каждом пункте. Стрелки влево/вправо тоже работают.
+    Звук — zen-кисть на каждом переезде плашки.
+  </p>
+
+  <script type="module">
+    /* Same cache problem as the stylesheets above — the modules are cached
+       too, so edits to pillnav.js would not land on reload either. */
+    const bust = window.__krkBust;
+    const { initKarakuliPillnav } = await import(`../web/pillnav.js?t=${bust}`);
+    const { initKarakuliSound } = await import(`../web/sound.js?t=${bust}`);
+
+    /* 'playful' on purpose: the energy dial filters a calm app down to
+       success/complete/error/warning, which would swallow the slide cue.
+       WebAudio also stays locked until the first pointerdown, so the very
+       first tap arms the sound and the ones after it are audible. */
+    const sound = initKarakuliSound({ energy: "playful" });
+
+    const panels = document.querySelectorAll("[data-screen-panel]");
+    const nav = document.getElementById("nav");
+    const pillnav = initKarakuliPillnav(nav, {
+      sound,
+      onChange({ id }) {
+        panels.forEach((panel) => {
+          panel.classList.toggle("is-shown", panel.dataset.screenPanel === id);
+        });
+      },
+    });
+
+    /* ?screen=sprout opens straight on that screen — handy for linking to
+       one state, and for capturing screenshots of a specific selection. */
+    const wanted = new URLSearchParams(location.search).get("screen");
+    if (wanted) {
+      const items = [...nav.querySelectorAll(".krk-pillnav__item")];
+      const index = items.findIndex((item) => item.dataset.screen === wanted);
+      if (index >= 0) pillnav.select(index);
+    }
+  </script>
+
+</body>
+</html>

@@ -376,6 +376,66 @@
   color: var(--krk-ink);
 }
 
+/* --- Sliding variant — .krk-pillnav--slider ------------------
+   One accent tile travels to the chosen screen instead of each
+   item lighting up in place. Every item keeps its doodle at all
+   times: the tile arriving is what marks the screen, so nothing
+   collapses to a dot. Requires web/pillnav.js to size and move the
+   indicator; without it the markup still renders as a plain row.  */
+
+.krk-pillnav--slider {
+  position: relative;
+  gap: 2px;
+  /* Nothing in this component is a pill or an ellipse: the bar is a barely
+     rounded rectangle, the marker inside it a rounded square. Overrides the
+     base .krk-pillnav pill radius. */
+  border-radius: 13px 14px 12px 13px / 13px 12px 14px 13px;
+}
+
+/* Sits behind the items, so the doodle reads on top of the fill. */
+.krk-pillnav__indicator {
+  position: absolute;
+  top: 6px; /* matches .krk-pillnav padding — the marker insets with the row */
+  left: 0;
+  height: 42px; /* squashed: slightly wider than tall, matching the item box */
+  background: var(--krk-accent);
+  /* Organic asymmetry (sanctioned intrusion #5), pushed further than the
+     usual +/-1px: every corner disagrees, so the fill reads as drawn by hand
+     rather than stamped out. Same trick .krk-btn--wobbly uses. */
+  border-radius: 10px 6px 8px 5px / 6px 9px 5px 8px;
+  pointer-events: none;
+  transition: transform var(--krk-motion-slow) var(--krk-motion-bounce),
+    width var(--krk-motion-slow) var(--krk-motion-bounce);
+}
+
+/* Before the first measurement there is no honest position to show. */
+.krk-pillnav__indicator:not(.is-measured) {
+  opacity: 0;
+}
+
+.krk-pillnav--slider .krk-pillnav__item {
+  position: relative; /* lifts the doodle above the travelling tile */
+  z-index: 1;
+  min-width: 52px;
+  min-height: 42px;
+  border-radius: 9px 6px 7px 6px / 6px 8px 6px 7px;
+  background: transparent;
+  color: var(--krk-accent);
+}
+
+/* The fill is the active marker, so the item itself never takes one —
+   only the doodle flips to paper as the tile slides under it. */
+.krk-pillnav--slider .krk-pillnav__item.is-active {
+  background: transparent;
+  color: var(--krk-paper);
+}
+
+.krk-pillnav--slider .krk-pillnav__item svg {
+  width: 26px;
+  height: 26px;
+}
+
+
 /* ============================================================
    9. Dot grid — .krk-dotgrid
    Dotted-notebook background utility, apply to any container.
@@ -496,7 +556,3 @@
 .krk-bloom:nth-child(5) { animation-delay: 240ms; }
 .krk-bloom:nth-child(6) { animation-delay: 300ms; }
 
-/* No local prefers-reduced-motion override here: tokens.css already collapses
-   every animation/transition duration to ~0 as a global guard, not a
-   per-component opt-out — duplicating that here would just be two places
-   making the same decision. */
