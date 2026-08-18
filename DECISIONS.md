@@ -29,6 +29,48 @@ Two sections:
 
 ### 2026-08-18
 
+#### Wobbly button — a filled, borderless, path-drawn second strength
+
+`.krk-btn--wobbly` was "a 1.5px ink border with pronounced organic corner asymmetry," border and shape only. It gains a stronger form: filled with the accent, no border, and its outline drawn as a closed cubic path rather than produced by `border-radius`. Reserved for the single most committing action in an app.
+
+The reasoning is the canon's own. §3 forbids ruler-straight lines in anything drawn, and organic radius only bends the corners — the four sides between them stay perfectly straight, so the "hand-placed" button was, at its edges, a machine-made rectangle. Drawing it as a path is what the pen rule already implied.
+
+The border went in a second pass, once it was seen against more than one palette. An outline in a second colour is a statement only some palettes can make: where an app sets `--krk-accent` to `--krk-ink` (the default), the fill and the edge are the same colour and there is no outline to see, while a brick-accented sibling showed a strong dark rule. Same component, two different shapes depending on taste — which is more than a theme is allowed to be. Rejected on the way: keeping the outline and having it appear only in accented apps, and outlining in paper instead (an inset edge, which read as a gap rather than as a drawn line).
+
+#### Drawing a box — bow by the side's own length, and opposite sides disagree
+
+Two facts about a hand-drawn rounded rectangle, both found the expensive way and neither guessable, now in §3.
+
+Scaling each side's bow to the box's *shorter* side is the obvious choice and it is wrong: on a 220 × 52 button the long edges then move by under a point and the shape comes back looking machined. The bow has to be a fraction of the side's own length, because a hand wanders in proportion to how far it is travelling.
+
+And the signs have to alternate. Bowing every side outward inflates the box into a pillow. Bowing top and bottom the same way — which is what "vary them a bit" produces if you are not watching — bends the button into a banana; it looked deliberate, like a curve someone had designed, rather than like an uneven line. One side out and its opposite in was what finally read as drawn.
+
+Also settled: the wobble is a fixed table, not a seed. This is the exact opposite of the rule for organic radius, and for the opposite reason — radius is seeded because many boxes are co-visible and have to differ from *each other*, while a path-drawn surface is rare enough in an app that it has nothing to differ from and wants one character instead of a family.
+
+#### Sliding selector — a second, quiet marker tone for in-screen choices
+
+The selector is now used twice in the same app: once as the screen switcher, once as a duration picker inside a screen. The nav keeps the accent-filled marker. The in-screen one takes a quiet marker in paper-2, and the chosen item's own label darkens under it.
+
+**This looks like a reversal of a decision logged earlier today and is not**, so the distinction is worth stating. When the slider was designed, a wash-filled capsule was shown and rejected — "too faint to read as the selection marker." That capsule was being asked to carry the selection *by itself*, in the navigation, where being unmistakable is the whole job. The quiet marker here is a different case on both counts: it marks a choice inside a screen rather than where you are in the app, and it never carries the selection alone. If a future use drops the second signal, the original objection applies again and the tone should go back to accent.
+
+What drove it: a dark block travelling across bare paper is the heaviest mark on the page, and a settings row is not what a screen is about. Rejected alongside: adding a wash to the palette for it (a new colour meaning something new, which §8 forbids), and dropping the marker entirely in favour of weight alone (loses the travel, which is the component's whole point).
+
+#### Entrances — squash and stretch, and timing on the energy dial
+
+The sprout may squash and stretch rather than scale on one axis. The rule that makes it read as growth: `scaleX` and `scaleY` never reach their extremes together — a frame where both go fat is a bubble inflating. Recorded because the failure is subtle and the fix is not obvious from watching it.
+
+Practical note that generalises: write the curve as frames, not as one array per channel. The character is entirely in how the channels disagree at a given moment, and parallel arrays are exactly the shape that hides that.
+
+Timing joins the energy dial rather than becoming a new default. Calm keeps ~300ms a doodle across a ~450ms window; playful can take it to ~200/~280, landing a whole field in under half a second.
+
+#### Entrances — replayable by pulling down, never with a refresh spinner
+
+An entrance worth looking at can be replayed by pulling down at the top of its scroll. It must not be built on the platform's pull-to-refresh control: that puts a system progress indicator on the paper, and a spinner is a promise that something is loading, which is a lie when the content is already there.
+
+The platform fact, recorded so it is not rediscovered: **Android reports no overscroll.** The offset stays at 0 while the finger drags, so the obvious negative-offset test silently does nothing there — on the phone this was built for, the first implementation appeared to be broken. A drag that *began* at the top and never moved the content can only have been downward, since upward would have scrolled; iOS bounces and reports a negative offset, which fails the same "greater than zero" test, so one rule covers both.
+
+### 2026-08-18
+
 #### Motion — reduced-motion guard removed entirely, movement gets an overshoot
 
 The global `prefers-reduced-motion` guard is gone: removed from `tokens.css`, `boil.css`, `boil.js`, `karakuli.css`, `anim.css`, `demo/motion.css`, the Compose mapping, `STYLE.md` and the skill. Karakuli now animates for everyone — boil keeps boiling, entrances keep playing, transitions keep their full duration, on every platform. Alongside it, anything that **moves or scales** now uses `--krk-motion-bounce` (`cubic-bezier(0.34, 1.56, 0.64, 1)`, promoted to a token from the curve `.krk-enter-sprout` was already using inline); colour and opacity keep `ease-out`, where an overshoot has nothing to overshoot into.
