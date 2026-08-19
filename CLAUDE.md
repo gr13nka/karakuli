@@ -65,7 +65,10 @@ soft round-nib pen, colour reserved for earned moments (rewards, onboarding, cel
 - **The pen contract is absolute:** stroke-only SVG, round caps/joins, cubic Béziers, no
   perfect circles/rects/straight lines, wobble baked into path data (2–4% of canvas) —
   never faked with runtime filters on static geometry. New artwork at any scale must read
-  as the same pen.
+  as the same pen. Fill is spent exactly twice (STYLE.md §3): a UI surface drawn as a
+  path and filled in the accent, and a doodle's *closed* subpaths filled with **paper**
+  where motifs overlap in a field. Paper, never a pen — it is an opacity decision, so
+  colour still only ever appears as an edge.
 
 ## Quick sanity list (the mistakes already made once)
 
@@ -76,3 +79,6 @@ soft round-nib pen, colour reserved for earned moments (rewards, onboarding, cel
   multi-stop keyframes with `steps(1, jump-end)` for flipbook-style discrete motion.
 - Docs drift is real: any new token, class, or cue must be spelled out in STYLE.md and
   the skill, or `check-sync` fails the build.
+- `check-sync`'s doodle-count rule matches any number within ~15 characters of the word
+  "motif", so ordinary prose ("motifs render ~120% of their cell") trips it. Reword
+  rather than loosening the check — it is the gate that keeps the count honest.

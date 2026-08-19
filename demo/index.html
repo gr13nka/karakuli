@@ -16,6 +16,10 @@
   <link rel="stylesheet" href="../web/tokens.css" />
   <link rel="stylesheet" href="../web/karakuli.css" />
   <link rel="stylesheet" href="../web/boil.css" />
+  <!-- anim.css carries the entrance classes and .krk-pulse, the one
+       standing loop. Only the pulse is shown here; the entrance
+       sampler lives in demo/motion.html. -->
+  <link rel="stylesheet" href="../web/anim.css" />
 
   <!-- boil.js is an ES module (it uses `export`), so it's loaded as
        type="module" here and again via dynamic import() in the sound
@@ -290,7 +294,13 @@
       gap: var(--krk-space-4);
     }
 
-    /* ---- Витрина: motif + character galleries ---------------------- */
+    /* ---- Витрина: pulse ------------------------------------------- */
+.demo-pulse-note { max-width: 46ch; margin: 0 0 var(--krk-space-4); }
+.demo-pulse-row { display: flex; align-items: center; gap: var(--krk-space-6); }
+.demo-pulse-dot { width: 44px; height: 44px; display: block; }
+.demo-pulse-next { display: inline-flex; }
+
+/* ---- Витрина: motif + character galleries ---------------------- */
 
     .demo-motif-grid {
       display: flex;
@@ -695,6 +705,32 @@
     </div>
 
     <hr class="krk-divider" />
+
+    <h3 class="demo-subheading">Пульс</h3>
+    <p class="krk-list-row__meta demo-pulse-note">
+      Один маркер на экран: он дышит там, где будет следующее действие.
+      Ближний план — пустые лунки поля, обведена та, куда сядет следующий росток.
+    </p>
+    <div class="demo-pulse-row">
+      <svg class="demo-pulse-dot" viewBox="10 10 28 28" fill="none" aria-hidden="true">
+        <path d="M24,21.4 C25.5,21.5 26.7,22.7 26.6,24.2 C26.5,25.6 25.3,26.7 23.8,26.6 C22.4,26.5 21.3,25.2 21.4,23.7 C21.5,22.3 22.6,21.3 24,21.4" fill="var(--krk-ink-faint)" />
+      </svg>
+      <span class="krk-pulse demo-pulse-next">
+        <svg class="demo-pulse-dot" viewBox="10 10 28 28" fill="none" aria-hidden="true">
+          <!-- The ring leans and runs long on one axis: at this size the pen's
+               own 2-4% knot wobble is a fraction of a pixel, so the tilt is the
+               only part of the hand you can actually see. -->
+          <path d="M24.00,17.2 C26.5,17.2 28.7,18.5 30.0,20.4 C31.2,22.2 31.2,24.5 30.2,26.4 C29.0,28.5 26.6,29.7 24.0,29.6 C21.4,29.6 19.0,28.3 17.8,26.2 C16.7,24.3 16.8,22.0 18.0,20.2 C19.3,18.4 21.5,17.2 24.0,17.2"
+                stroke="var(--krk-ink-soft)" stroke-width="1.6" fill="none"
+                stroke-linecap="round" stroke-linejoin="round"
+                transform="rotate(-9 24 24) translate(24 24) scale(1.07 0.93) translate(-24 -24)" />
+          <path d="M24,21.4 C25.5,21.5 26.7,22.7 26.6,24.2 C26.5,25.6 25.3,26.7 23.8,26.6 C22.4,26.5 21.3,25.2 21.4,23.7 C21.5,22.3 22.6,21.3 24,21.4" fill="var(--krk-ink-faint)" />
+        </svg>
+      </span>
+      <svg class="demo-pulse-dot" viewBox="10 10 28 28" fill="none" aria-hidden="true">
+        <path d="M24,21.4 C25.5,21.5 26.7,22.7 26.6,24.2 C26.5,25.6 25.3,26.7 23.8,26.6 C22.4,26.5 21.3,25.2 21.4,23.7 C21.5,22.3 22.6,21.3 24,21.4" fill="var(--krk-ink-faint)" />
+      </svg>
+    </div>
 
     <h3 class="demo-subheading">Мотивы</h3>
     <div class="demo-motif-grid">

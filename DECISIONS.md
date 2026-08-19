@@ -13,6 +13,7 @@ Two sections:
 
 - Radio and uncheck currently share a "release"-family sameness the user noticed but kept as-is — worth a second look if it starts feeling indistinct in practice.
 - Button-tap cue `press` is provisional — not yet user-confirmed by ear the way check/uncheck/radio were.
+- A stated **minimum render size for hand-drawn character**. Knot wobble is 2–4% of the canvas, which on an eleven-point mark is a sixth of a point — invisible, so a small drawn circle renders as the compass circle §3 forbids. This is the third instance of a pattern the canon already records twice separately (boil needs ~40px; crayon grain is hero-only) and may want stating once as a principle. Deliberately not adopted on 2026-08-19 — see that entry for the workaround in use and the open question it leaves.
 - Dark mode. Candidate direction: deep warm-gray paper + chalk-coloured ink, same paper+ink+colour-moments structure. Not designed.
 - Love2D mapping — a Lua-side equivalent of the web tokens, including how the boil-filter concept translates to a non-CSS rendering context.
 - Rules for data-dense screens (tables, charts) — canon doesn't address this yet.
@@ -26,6 +27,46 @@ Two sections:
 ---
 
 ## Log
+
+### 2026-08-19
+
+Three amendments, all found while building a meditation app's garden — a field of 108 cells where completed sittings grow a motif and the rest stay placeholder dots. The field was tightened from six columns to twelve, which halved the cell and forced the motifs up to ~185% of it, and each of these fell out of that.
+
+#### Doodles may fill their closed paths with paper
+
+§3 said fill was set aside "for the shape of a UI surface, never for a doodle." It is now spent two ways: that, and a doodle's closed subpaths filled with **paper** where motifs overlap.
+
+This follows from a decision already in this log. Motifs in a garden were sanctioned to render larger than their cell (2026-08-17), and past roughly 150% they genuinely cross — at which point every drawing is see-through and you read the next plant's stem through a mushroom's cap. That is a tangle, not a garden. An ink drawing stops being see-through by sitting *on* paper rather than by being coloured in, so the fill is always the ground and never a pen: colour still only appears as an edge, and the rule that would actually change the system — filling a doodle with *colour* — stays forbidden.
+
+The part worth keeping is how a shape is told from a stroke: it is read off the drawing rather than annotated beside it. A subpath that closes encloses something and takes the fill; one that does not is a stroke, and filling it lays a slab across the gap between its ends. A leaf, a cap, a berry and a bloom qualify; a stem, a blade and a bristle do not. Derived, so a redrawn motif or a new one added later comes out right without anyone remembering the rule exists.
+
+Rejected: annotating each motif with which of its paths are shapes (works, and rots the first time a motif is redrawn); drawing the field sparser so nothing overlaps (gives back the thicket that the 2026-08-17 decision was made to get); and giving overlapping motifs an opaque bounding box (a rectangle of paper behind a doodle, which is a shape this pen does not draw).
+
+#### Motifs in a field stand on one ground line
+
+New §9 subsection. Every motif in a set is drawn standing on the same baseline, and the field then places every mark — motifs and placeholders alike — against one named ground line rather than centring each in its cell.
+
+The bug it fixes is that "centre it in its cell" means two different things. A placeholder dot has its ink at its canvas centre, so centring the canvas centres the ink; a motif drawn standing on a baseline has its root `(baseline − canvas/2) / canvas` of its rendered size *below* that centre. Centre both and they disagree by exactly that — around a third of the motif's size for something rooted near the foot of its page, and about two thirds of a cell at 185%. A row holding some of each reads as a rendering fault, and a field where you tap a placeholder to grow a motif was quietly growing it somewhere other than where you tapped.
+
+Two things kept it hidden longer than it should have been, and both are in the canon now because they are what makes it hard to see rather than hard to fix. It scales with the motif's zoom, so it creeps in as a field is tightened instead of appearing at once — it was a third of a cell before the zoom and nobody noticed. And a motif's *visual mass* still centres on the cell, since its ink spans its canvas fairly evenly, so the field goes on reading as a lattice while the baselines do not line up.
+
+Where the line sits is a look, not a derivation: every value aligns the two marks, and what it picks is which of them pays for it. Splitting it roughly evenly was chosen over moving only the motifs (largest disturbance to an already-good planted field) and over moving only the placeholders (leaves the tappable mark hard against its cell edge, where a low tap lands on the neighbour).
+
+Two consequences are recorded with it. Anything tappable now draws *over* the motifs, because a motif taller than a cell necessarily reaches past the row above's ground line for any ground line you pick, and with the paper fill above it paints over that row's targets — a placeholder showing over a leaf reads as ground behind the garden, while a target you cannot see reads as nothing. And an entrance pivots on the motif's drawn baseline rather than the bottom of its box, which is a nib's margin lower; pivoting there made every root travel a little on each swing and set back down.
+
+#### The invitation pulse — a third motion layer
+
+`.krk-pulse`: one marker breathing in place, indefinitely, to say where the next action would go. Boil says a thing was drawn by hand and an entrance says it has just arrived; this is the first sanctioned loop on interface rather than illustration.
+
+It is recorded with its constraints rather than as a permission, because it is one step from the engagement mechanic the rest of the system exists to avoid: a thing that moves forever to pull you towards an action. One marker per screen, a swing small enough (scale ~1.08, opacity ~0.7) to notice only once you are already looking, transform and opacity only, the app's single breath count shared with anything else that breathes, and nothing that accumulates, congratulates or keeps score — it looks the same on day one and after a month away.
+
+Rejected: a one-shot twitch after the entrance settles (keeps the no-extra-loops line intact and was the safer option, but a mark that moves once and stops is an entrance, not an invitation — it is gone by the time you are looking at the field); and a louder swing, which turned the marker into the loudest thing on a screen whose whole argument is that it is quiet.
+
+Also settled in passing: the marker goes on the **next empty** slot, not the last filled one. A field that is both record and promise needs no marker on the record — the filled marks are the record. And a marker is never drawn in the colour of the thing it marks, which ruled out the placeholder's own faint ink; the accent was ruled out as already spoken for, and green because green means something grew and nothing has grown there yet.
+
+#### Left unsettled
+
+Whether hand-drawn character has a stated **minimum render size**. Knot-level wobble is 2–4% of the canvas, which on an eleven-point mark is a sixth of a point — invisible, so a small drawn circle renders as a compass circle and breaks §3's own rule. This is the third instance of one pattern the canon already records twice separately (boil needs ~40px; crayon grain is hero-only), and it may want stating once as a principle. Not adopted yet. The app it surfaced in keeps its small ring hand-made by tilting it and running one axis long, so the uneven scale carries the nib and the line thickens through the turn; whether that counts as baked-in wobble or as a runtime effect layered over clean geometry is exactly the question left open.
 
 ### 2026-08-18
 

@@ -111,12 +111,17 @@ The ratio matters more than the absolute number — a doodle icon and a hero ill
 
 **Crayon-grain filter** — an optional SVG filter that adds a faint textured grain to a stroke, evoking a slightly worn nib. Reserved for hero illustrations only (the `0 0 200 200` canvas). Never apply it to doodle icons or UI-scale marks — at small sizes the grain reads as noise, not texture, and it undermines the crispness the icon set depends on for legibility.
 
-**Drawing a container's shape.** Organic asymmetric radius (§4, item 5) gives a box four corners that disagree, but the four sides between them stay ruler-straight — which is the one thing this pen never draws. A surface that has to read as *drawn* rather than merely soft-cornered gets its outline as a closed cubic path instead of a `border-radius`, and is **filled** rather than stroked. This is the one place the stroke-only rule above is set aside, and it is set aside for the shape of a UI surface, never for a doodle.
+**Drawing a container's shape.** Organic asymmetric radius (§4, item 5) gives a box four corners that disagree, but the four sides between them stay ruler-straight — which is the one thing this pen never draws. A surface that has to read as *drawn* rather than merely soft-cornered gets its outline as a closed cubic path instead of a `border-radius`, and is **filled** rather than stroked.
+
 
 Two facts about that geometry, both of which cost real time to find and neither of which is guessable:
 
 - **A side's bow is a fraction of its own length, not of the box's shorter side.** Measured against the short side, the long edges of a wide button move by well under a point and the shape comes back looking machined. A hand wanders in proportion to how far it is travelling.
 - **Opposite sides disagree in sign.** Bowing every side outward inflates the box into a pillow; bowing top and bottom the *same* way bends it like a banana. One side out and its opposite in reads as uneven, which is what was wanted.
+
+**Fill is spent two ways and no others.** The container above is the first: a UI surface filled in the accent. The second is a doodle filled with **paper**, and only where motifs overlap. A field drawn dense enough that its drawings cross (§9) makes each of them see-through — you read the next plant's stem through a mushroom's cap — and the result is a tangle rather than a garden. An ink drawing stops being see-through by sitting *on* paper, not by being coloured in, so the fill is always the ground and never a pen: colour still only ever appears as an edge, and a garden of solid colour would be a different system.
+
+Which paths qualify is read off the drawing rather than recorded beside it: **a subpath that closes is a shape and takes the fill; one that does not is a stroke and does not.** A leaf, a cap, a berry and a bloom come back to where they started and enclose something; a stem, a blade and a bristle do not, and filling one lays a slab across the gap between its ends. Deriving it means a redrawn motif, or a new one added later, comes out right without anyone remembering this rule exists. Note the pen's own `fill="none"` stays the default — a caller overrides it deliberately, and only for these two cases.
 
 Working numbers: sides bow 1.5–2% of their own length, corners land within ±20% of nominal. The wobble is a **fixed table, not a seed** — the opposite of item 5's rule, and for the opposite reason. Organic radius is seeded because many boxes are visible at once and have to differ from each other; a drawn surface is rare enough in an app that it has nothing to differ from, so it gets one character rather than a family of them.
 
@@ -205,13 +210,32 @@ Karakuli's illustrations are alive in a small, specific way: key doodles get a s
 
 **No reduced-motion guard.** Karakuli deliberately animates for everyone: there is no `prefers-reduced-motion` block in `tokens.css`, no boil opt-out, and no per-component carve-out. Don't reintroduce one without the user's say-so — its removal was a deliberate call (see `DECISIONS.md`), and the accessibility cost was accepted knowingly.
 
+### The invitation pulse
+
+Karakuli's third motion layer, and the smallest. Boil says *this was drawn by hand*; an entrance says *this has just arrived*; a **pulse** says *this is where you would go next*. `.krk-pulse` breathes a single marker in place, indefinitely, for as long as its screen is open.
+
+It is the only sanctioned loop on interface rather than on illustration, and it is deliberately narrow, because a thing that moves forever to draw you towards an action is one step from an engagement mechanic — which the rest of this system is built to avoid. Four constraints keep it honest:
+
+- **One marker per screen.** It marks the single next action. Two things breathing is a screen arguing with itself.
+- **A swing you notice only once you are already looking** — scale to about 1.08, opacity to about 0.7, and nothing else. Transform and opacity only, so it stays on a native/compositor driver.
+- **One breath for the whole app.** Share the count with whatever else breathes — four seconds in, six out, out longer than in, the pace worth borrowing from a real one. Two loops at nearly the same tempo read as a mistake.
+- **It never accumulates, congratulates or keeps score.** It looks the same on day one and after a month away. A pulse that grew more urgent the longer you ignored it would be exactly the thing this rule exists to forbid.
+
+Anything beyond that — a pulsing button, several pulsing rows, a pulse that intensifies — is out of canon. Where a state genuinely needs to be *reported* rather than invited, that is the boil/entrance layer's job or no motion at all.
+
 ### Entrances
 
 Entrances are how things arrive on screen for the first time. The doctrine below was picked by eye against a Pinterest reference: an iOS "days of growth" calendar, where a dot-grid of past days pops up as tiny pen-blue doodles, near-simultaneously, with random offsets, boiling continuously once they land. Implementation lives in `web/anim.css` and `web/anim.js`.
 
 1. **Doodles and illustrations sprout.** `.krk-enter-sprout` grows an element up from the ground — transform-origin at the base, `scaleY` 0.25 → 1.05 → 1, ~300ms, a slight overshoot then settle.
 
+   **The base is the motif's drawn baseline, not the bottom of its box.** A doodle keeps a margin below its lowest ink so the round nib has room, so pivoting on the box bottom pivots a nib's width too low: the root itself then travels a little on every swing and sets back down, which reads as the whole drawing sliding rather than growing. Pivot on the line the motif is drawn to stand on (§9), and only the parts above it move.
+
    A sprout may carry **squash and stretch** instead of scaling on one axis: the doodle shoots past full height while still pinched narrow, swings back under it as it widens, then settles. The rule that makes it read as growth is that `scaleX` and `scaleY` are **never at their extremes together** — a frame where both go fat at once is a bubble inflating, not something growing. Write the curve as frames rather than as one array per channel; the character is entirely in how the channels disagree at a given moment, and parallel arrays hide exactly that.
+
+   **The settle is a damped spring: each swing is about half the one before.** Overshoot a half, then a fifth, then a tenth. Swings that decay slowly read as jelly; swings that stop dead read as a cut. Halving is what a real spring does and it is the whole difference between the two.
+
+   Best generated rather than typed. Drive the frame table from spring parameters — peak, damping, number of swings, rise, area — so the decay is true by construction, and compute `scaleX` as `area / scaleY` so the two channels *cannot* reach their extremes together however the parameters are set. That turns the never-both-fat rule above from something to remember into something the curve is incapable of breaking. Tuning a settle by editing frames, reloading and watching the animation go past once does not work; build the sliders.
 
    The timing is on the energy dial (§8). Calm keeps the ~300ms sprout and the ~450ms scatter window above. A playful app can take the whole field down to ~200ms a doodle across a ~280ms window, which lands the burst in under half a second — brief enough that it is something you notice rather than something you wait through.
 2. **A field of doodles enters as one organic burst, not a sweep.** A garden or a scatter of motifs uses `krkStagger(container, { mode: 'scatter' })` (in `web/anim.js`), which staggers each element by an independent random delay within a ~450ms window, applied via the `--krk-enter-delay` custom property. This is deliberately not a sequential left-to-right sweep — the reference pops everything near-simultaneously, and a sweep reads mechanical.
@@ -283,6 +307,24 @@ On top of the motif library, Karakuli has two canonical mascots — settled, not
 - **Батон**, the loaf cat — the secondary mascot (`baton-idle.svg`, `baton-sleep.svg`). Reaches for rest, sleep, and quiet or empty states — a natural fit wherever the tone needs to stay calm rather than celebratory, wellness contexts especially.
 
 Both are intentionally rationed to a small number of high-value moments, not sprinkled everywhere; a character that appears constantly stops feeling like a character and starts feeling like a logo. New poses for either mascot are drawn under the same pen contract as every other hero illustration (`0 0 200 200` viewBox, stroke-width 7), so a new pose still looks like it came from the same hand as the existing ones. No third character joins the roster without deliberate intent — it's closed by default, not by oversight.
+
+### Motifs in a field
+
+A field is many motifs shown on a grid at once — a garden, a scatter, a calendar of days. Three rules, all learned the expensive way.
+
+**Motifs share a baseline, and the field has a ground line.** Draw every motif in a set standing on the same y on its canvas, so a row of them shares a horizon rather than each floating at its own height. Then place the field against a named **ground line** — a fraction of the cell — and put every mark on it.
+
+The trap this exists to prevent is that "centre it in its cell" means two different things to two marks. A dot, a placeholder or a spark has its ink at its canvas centre, so centring the canvas centres the ink. A motif drawn standing on a baseline does not: its ink sits `(baseline − canvas/2) / canvas` of its rendered size *below* the canvas centre. Centre both and they disagree by exactly that, which for a motif rooted near the foot of its page is around a third of its size. A row holding some of each then looks like a rendering fault, and a field where you tap a placeholder to grow a motif is quietly growing it somewhere other than where you tapped.
+
+Two things make it worse rather than obvious. It scales with the motif's zoom (below), so it arrives by degrees as a field is tightened rather than appearing all at once. And a motif's *visual mass* usually still centres on the cell, since its ink spans the canvas fairly evenly — so the field goes on reading as a lattice while the baselines do not line up, and the eye blames something else.
+
+Derive both placements from the one ground line rather than positioning each by hand, and the two cannot drift apart again at any zoom.
+
+**Motifs may be drawn larger than their cell**, ~120–185% with size jitter, which is what makes a field read as a thicket rather than as a spreadsheet. Past roughly 150% they start crossing each other and want the paper fill from §3. The overhang has to be paid for in padding around the field: a scroll container clips at its own edge whatever its children say about overflow, and the top row comes back with its heads sheared flat — subtle enough to read as a drawing style rather than as a bug. Size that padding from the *entrance* too, not just the resting art, since a sprout stands well over its own root at peak.
+
+**Anything tappable draws over the motifs.** Once motifs exceed their cell and take the paper fill, a motif necessarily paints over the placeholder marks of the row above it — its head reaches past that row's ground line for any ground line you pick, because a motif is taller than a cell. A placeholder showing over a leaf reads as ground behind the garden, which is what it is; a target you cannot see reads as nothing at all. Related: when a mark moves off its cell centre, its *hit area* stays on the lattice, so keep its ink well inside its own cell or a tap aimed at what you can see lands on the neighbour.
+
+**Mark what is next, not what is done.** A field that is both a record and a promise needs no marker on the record — the filled marks are the record. The single thing worth marking is the empty slot the next action would fill, because that is the only part of the field about carrying on. And a marker is never drawn in the colour of the thing it marks: a ring around a placeholder in the placeholder's own faint ink is not a ring, it is a bigger placeholder.
 
 ---
 

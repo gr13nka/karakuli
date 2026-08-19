@@ -1,11 +1,13 @@
 /*
- * Karakuli — entrance-motion layer
+ * Karakuli — entrance-motion layer, and the one standing loop
  * -----------------------------------------------------------------------
  * The three canon ways a doodle, icon, or card enters a screen — picked
  * by eye against a reference animation in demo/motion.html, which still
  * hosts the runner-up variants as a witness page (see its header comment).
  * Doctrine: STYLE.md §6 covers boil, the wiggle a doodle gets once it's
- * on the page; this file covers how it gets there in the first place.
+ * on the page; this file covers how it gets there in the first place —
+ * plus .krk-pulse at the foot, the invitation loop that marks where you
+ * would go next.
  *
  * Each class reads one custom property, --krk-enter-delay, for its
  * animation-delay — set it per element with web/anim.js's krkStagger()
@@ -20,7 +22,12 @@
 /* sprout — grows from the ground. Winner for doodle / illustration entrances. */
 
 .krk-enter-sprout {
-  transform-origin: 50% 100%;
+  /* The motif's drawn baseline, which is not the bottom of its box: a doodle
+     keeps a margin below its lowest ink for the round nib, so pivoting at 100%
+     pivots a nib's width too low and the root itself travels on every swing.
+     Motifs drawn to a baseline should set --krk-baseline to it as a percentage
+     of their own height (a 48-unit motif rooted at y=43 sets 89.6%). */
+  transform-origin: 50% var(--krk-baseline, 100%);
   animation: krk-enter-sprout 300ms var(--krk-motion-bounce) both;
   animation-delay: var(--krk-enter-delay, 0ms);
 }
@@ -72,4 +79,30 @@
 @keyframes krk-enter-rise {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* pulse — the invitation loop. STYLE.md §6, "The invitation pulse".
+   One marker per screen, breathing where it stands for as long as the screen
+   is open, to say "this is where you would go next".
+
+   Four seconds in, six out: the same count as anything else in the app that
+   breathes, and out longer than in because that is the pace worth borrowing
+   from a real breath. The asymmetry is why this is a two-stop cycle rather
+   than an `alternate` direction, which would only ever give equal halves.
+
+   Transform and opacity only, so it stays on the compositor. Do not add
+   colour, stroke-width, or size to this — a marker that changes weight is
+   redrawing itself, not breathing. */
+
+.krk-pulse {
+  animation: krk-pulse 10s var(--krk-motion-ease) infinite both;
+  animation-delay: var(--krk-enter-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+@keyframes krk-pulse {
+  0% { opacity: 1; transform: scale(1.08); }
+  60% { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.08); }
 }
