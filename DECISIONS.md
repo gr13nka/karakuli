@@ -28,6 +28,43 @@ Two sections:
 
 ## Log
 
+### 2026-08-20
+
+#### A formal sibling system, "Article", exists in its own repo — Karakuli is unchanged
+
+A second design language was built today for formal contexts (reading tools, dev tools, docs,
+dashboards): squared-off editorial print, display serif over humanist sans, one crimson spent
+structurally, hairlines, light theme plus a Catppuccin Mocha dark theme. It lives at
+`~/Documents/article` with its own `STYLE.md`, its own `DECISIONS.md`, its own `--art-`
+prefix, and its own `article-style` skill. **Nothing in this repo changed** — this entry
+exists only so a future session knows the sibling is there and does not try to reconcile them.
+
+Why it is not a register inside Karakuli, and why §8's "not to quietly fork it" clause does
+not apply: that clause forbids forking Karakuli for one app's convenience. This is not a
+fork, it is an inverse. `poster/POSTER.md` works as a satellite here precisely because it only
+changes *volume* and opens by stating everything in STYLE.md "still applies without
+exception." The formal system contradicts canon clause by clause — §3 forbids straight lines
+and perfect rectangles where the new system is nothing but rectangles; §5 rations colour to
+earned moments where the new system spends one colour on every page; §4's six sanctioned
+intrusions become zero. A system that inverts canon cannot extend it, and putting two
+constitutions under one `CLAUDE.md` authority order would make "read STYLE.md first"
+ambiguous. It is also meant to be shared publicly, which this repo — personal, unlicensed,
+with `/Users/…` paths hardcoded in two files — is not.
+
+**This does not resolve the "Karakuli Prose" backlog item above, and Prose stays unsettled.**
+Prose is a *reading register inside Karakuli*: canon paper, ink and accent stay, the chrome
+stays sans, and a doodle motif stands in for the fleuron. It is still hand-drawn. The sibling
+system shares none of that. If Prose is ever built, it is built here, under this constitution.
+
+One thing learned there is worth recording as a warning for this repo, because it is a live
+defect rather than a preference: `karakuli.css` renders six marks (check, radio scribble, tab
+underline, divider, list separator, inline arrow) as inline `data:image/svg+xml` URIs with
+the ink hex `%2326241F` baked in, because `currentColor` cannot reach inside a data URI.
+Those six marks therefore cannot follow an accent or a theme, and they are the single largest
+obstacle to the dark mode sketched in the Unsettled list. Whenever dark mode is designed
+here, converting those six to file-plus-`mask-image` is a prerequisite, not a detail.
+
+
 ### 2026-08-19
 
 Three amendments, all found while building a meditation app's garden — a field of 108 cells where completed sittings grow a motif and the rest stay placeholder dots. The field was tightened from six columns to twelve, which halved the cell and forced the motifs up to ~185% of it, and each of these fell out of that.
