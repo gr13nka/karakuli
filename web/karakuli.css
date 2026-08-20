@@ -327,7 +327,11 @@
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'%3E%3Cpath d='M0,4 C12,2.5 25,5.5 37,4 C50,2.5 62,5.5 75,4 C87,2.5 100,5.5 112,4 C125,2.5 137,5.5 150,4 C162,2.5 175,5.5 187,4 C195,3 200,4.5 200,4' fill='none' stroke='%2326241F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
-  background-size: 160px 6px;
+  /* The tile has to keep the drawing's own 200x8 proportions. At any other
+     ratio the SVG scales to *meet* inside the tile and is letterboxed, which
+     on a repeating background puts a visible gap at every seam — the one way
+     a hand-drawn rule can end up looking machine-cut. 150x6 is 200x8 at 0.75. */
+  background-size: 150px 6px;
   opacity: 0.35;
 }
 

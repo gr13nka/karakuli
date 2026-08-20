@@ -34,9 +34,16 @@ function read(absOrRelPath, check) {
 
 const tokensCss = read('web/tokens.css', 'tokens');
 const styleMd = read('STYLE.md', 'docs') ?? '';
-const skillMd = read(SKILL_MD, 'docs') ?? '';
 const karakuliCss = read('web/karakuli.css', 'classes');
-const docsText = styleMd + '\n' + skillMd;
+
+/* The operational skill deliberately lives outside this repo, in the user's
+   global Claude directory. Its absence is therefore a fact about the machine,
+   not drift in the repo — on CI it is never there — so the checks that read it
+   are skipped with a note rather than failed. Everything the repo owns is still
+   checked, so a clean run away from that machine still means something. */
+const skillMd = existsSync(SKILL_MD) ? readFileSync(SKILL_MD, 'utf8') : null;
+if (skillMd === null) console.log(`check-sync: note — ${SKILL_MD} not on this machine; checks that read it are skipped`);
+const docsText = styleMd + '\n' + (skillMd ?? '');
 
 // ---- 1. Token coverage: every --krk-* defined in tokens.css should be
 // named (verbatim, including the -- prefix) in at least one canonical doc.
@@ -53,7 +60,7 @@ if (tokensCss) {
 // the dot), so state suffixes fall out on their own. Underscores are
 // included so BEM elements (.krk-pillnav__item) surface as their own
 // entries instead of truncating to their block (.krk-pillnav).
-if (karakuliCss) {
+if (karakuliCss && skillMd !== null) {
   const classes = [...karakuliCss.matchAll(/\.krk-[a-z0-9_-]+/g)].map((m) => m[0].slice(1));
   for (const c of new Set(classes)) {
     if (!skillMd.includes(c)) warn('classes', `.${c} defined in karakuli.css but not named in SKILL.md`);
@@ -75,7 +82,7 @@ if (existsSync(charDir)) {
 const doodleDir = join(ROOT, 'doodles');
 if (existsSync(doodleDir)) {
   const actual = readdirSync(doodleDir).filter((f) => f.endsWith('.svg')).length;
-  for (const [label, text] of [['STYLE.md', styleMd], ['SKILL.md', skillMd]]) {
+  for (const [label, text] of [['STYLE.md', styleMd], ['SKILL.md', skillMd]].filter(([, t]) => t !== null)) {
     for (const m of text.matchAll(/(\d+)\s+(?:ready\s+)?мотив[а-яё]*|мотив[а-яё]*\D{0,15}?(\d+)|(\d+)\s+(?:ready\s+)?motifs?\b|motifs?\D{0,15}?(\d+)/gi)) {
       const claimed = Number(m[1] ?? m[2] ?? m[3] ?? m[4]);
       if (claimed !== actual) warn('doodle-count', `${label} says ${claimed} motifs near "${m[0].trim()}", but doodles/ has ${actual}`);
@@ -91,7 +98,7 @@ if (tokensCss) {
   if (!font) {
     warn('fonts', 'could not find --krk-font-sans in tokens.css to determine the canonical font');
   } else {
-    const surfaces = ['web/tokens.css', SKILL_MD, 'STYLE.md', 'compose/Karakuli.kt', 'poster/template.html'];
+    const surfaces = ['web/tokens.css', SKILL_MD, 'STYLE.md', 'compose/Karakuli.kt', 'poster/template.html', 'demo/index.html'];
     for (const surface of surfaces) {
       const text = surface === SKILL_MD ? skillMd : surface === 'STYLE.md' ? styleMd : surface === 'web/tokens.css' ? tokensCss : read(surface, 'fonts');
       if (text !== null && !text.includes(font)) warn('fonts', `"${font}" not found in ${surface}`);
