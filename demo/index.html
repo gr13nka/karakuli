@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Karakuli — витрина</title>
-  <meta name="description" content="Karakuli: бумага, чернила и цветные моменты. Вся система на одной странице — экраны, палитра, перо, компоненты, движение, звук, мотивы и персонажи." />
+  <title>Karakuli — the showcase</title>
+  <meta name="description" content="Karakuli: paper, ink and colour moments. The whole system on one page — screens, palette, the pen, components, motion, sound, motifs and characters." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -214,7 +214,7 @@
        at all. The twins are checked against the live specimens beside
        them whenever this page is touched. */
 
-    .demo-hover.krk-btn--primary { background: #3a372f; }
+    .demo-hover.krk-btn--primary { background: color-mix(in srgb, var(--krk-accent) 91%, var(--krk-paper)); }
     .demo-hover.krk-btn--outline { background: var(--krk-paper-2); }
     .demo-hover.krk-btn--ghost { background: var(--krk-paper-2); color: var(--krk-ink); }
     .demo-hover.krk-tab { color: var(--krk-ink); }
@@ -256,7 +256,7 @@
     html[data-font="nunito"] { --krk-font-sans: 'Nunito', 'M PLUS Rounded 1c', 'Onest', 'Inter', system-ui, sans-serif; }
     html[data-font="rubik"] { --krk-font-sans: 'Rubik', 'M PLUS Rounded 1c', 'Onest', 'Inter', system-ui, sans-serif; }
 
-    /* ---- 01 Марка ----------------------------------------------- */
+    /* ---- 01 The mark -------------------------------------------- */
 
     .demo-header { padding-top: var(--krk-space-5); }
 
@@ -279,7 +279,7 @@
       font-size: var(--krk-text-lg);
     }
 
-    /* ---- 02 Три экрана ------------------------------------------ */
+    /* ---- 02 Three screens --------------------------------------- */
 
     .demo-phones {
       display: flex;
@@ -368,7 +368,7 @@
       gap: var(--krk-space-3);
     }
 
-    /* ---- 03 Бумага и чернила ------------------------------------ */
+    /* ---- 03 Paper and ink --------------------------------------- */
 
     .demo-swatch-row {
       display: flex;
@@ -385,6 +385,28 @@
       text-align: center;
     }
 
+    /* Both grounds at once, whichever one the page itself is in. color-scheme
+       inherits, and light-dark() resolves against the element's own computed
+       value — so pinning it on a panel makes every token inside that panel
+       pick its other half, with no JavaScript and no second set of hexes. */
+    .demo-grounds {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--krk-space-5);
+    }
+
+    .demo-ground {
+      flex: 1 1 260px;
+      padding: var(--krk-space-5);
+      background: var(--krk-paper);
+      color: var(--krk-ink);
+      border: 1px solid var(--krk-ink-faint);
+      border-radius: 10px 13px 9px 12px / 12px 9px 13px 10px;
+    }
+
+    .demo-ground--day { color-scheme: light; }
+    .demo-ground--night { color-scheme: dark; }
+
     .demo-swatch__chip {
       width: 56px;
       height: 56px;
@@ -399,7 +421,7 @@
       overflow-wrap: anywhere;
     }
 
-    /* ---- 04 Типографика ----------------------------------------- */
+    /* ---- 04 Type ------------------------------------------------ */
 
     .demo-type-row {
       display: flex;
@@ -418,7 +440,7 @@
 
     .demo-type-row__sample { min-width: 0; overflow-wrap: anywhere; }
 
-    /* ---- 05 Перо ------------------------------------------------- */
+    /* ---- 05 The pen --------------------------------------------- */
 
     .demo-pen-row {
       display: flex;
@@ -432,7 +454,7 @@
     .demo-motif-lg { width: 140px; height: 140px; color: var(--krk-ink); }
     .demo-hero-lg { width: 180px; height: 180px; color: var(--krk-ink); }
 
-    /* ---- 06 Витрина: composition-only helpers -------------------- */
+    /* ---- 06 The gallery: composition-only helpers --------------- */
 
     .demo-field-narrow { min-width: 220px; }
 
@@ -456,7 +478,7 @@
       transform: none;
     }
 
-    /* ---- 07 Движение --------------------------------------------- */
+    /* ---- 07 Motion ---------------------------------------------- */
 
     .demo-anim-motifs {
       display: flex;
@@ -480,7 +502,7 @@
     .demo-pulse-dot { width: 44px; height: 44px; display: block; }
     .demo-pulse-next { display: inline-flex; }
 
-    /* ---- 09 Мотивы ------------------------------------------------
+    /* ---- 09 Motifs ----------------------------------------------
        The field, per STYLE.md §9: motifs drawn larger than their cell so
        the set reads as a thicket rather than a lattice, every one of
        them standing on a single ground line, and the overhang paid for
@@ -492,7 +514,18 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
       gap: 0;
-      padding: var(--krk-space-8) var(--krk-space-5) var(--krk-space-6);
+      /* Bounded to five columns on a desktop plate, which is what turns the
+         set into four full rows instead of eleven and a ragged nine — a
+         half-empty last row reads as a rendering fault rather than as a
+         garden. auto-fill still drops to three or two on a narrow screen.
+         The bound matches .demo-note's measure so plate and note share a
+         left edge and a right one. */
+      max-width: 648px;
+      /* Top padding is the overhang rule: a motif at 168% stands well over
+         its own root and a sprout stands higher still. The foot needs far
+         less, because every motif already leaves the bottom quarter of its
+         cell as ground. */
+      padding: var(--krk-space-8) var(--krk-space-5) var(--krk-space-3);
       background: var(--krk-paper);
       color: var(--krk-ink);
     }
@@ -546,7 +579,7 @@
       overflow-wrap: anywhere;
     }
 
-    /* ---- 10 Персонажи -------------------------------------------- */
+    /* ---- 10 Characters ------------------------------------------ */
 
     .demo-character-grid {
       display: flex;
@@ -590,10 +623,13 @@
     }
   </style>
 
-  <!-- Restore the font-switcher preview before first paint, so a refresh
-       doesn't flash the default look before the wiring script (bottom of
-       body) re-applies the saved choice. Independent of the sound layer
-       by design — this must keep working even if sound.js is broken. -->
+  <!-- Restore the font-switcher preview and the theme before first paint, so
+       a refresh doesn't flash the default look before the wiring script
+       (bottom of body) re-applies the saved choice. Independent of the sound
+       layer by design — this must keep working even if sound.js is broken.
+       The theme half cannot be done from web/theme.js's module import: a
+       module is async by definition, so it always resolves after the first
+       paint has already happened in the wrong colours. -->
   <script>
     (function () {
       try {
@@ -603,6 +639,12 @@
         var font = localStorage.getItem('krk-demo-font');
         if (font === 'onest' || font === 'nunito' || font === 'rubik') {
           document.documentElement.dataset.font = font;
+        }
+        // Same shape for the theme: no attribute means "follow the OS",
+        // which is also what an unrecognised stored value falls back to.
+        var theme = localStorage.getItem('krk-theme');
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', theme);
         }
       } catch (e) {
         // localStorage unavailable (private mode, etc.) — defaults stand.
@@ -614,27 +656,34 @@
 
   <div class="demo-controls">
     <div class="demo-control-group">
-      <span class="demo-control-label" id="demo-sound-label">Звук</span>
-      <button id="krk-sound-toggle" class="demo-chip" type="button" aria-pressed="true" aria-describedby="demo-sound-label">вкл</button>
+      <span class="demo-control-label" id="demo-sound-label">Sound</span>
+      <button id="krk-sound-toggle" class="demo-chip" type="button" aria-pressed="true" aria-describedby="demo-sound-label">on</button>
     </div>
 
     <div class="demo-control-group" role="group" aria-labelledby="demo-font-label">
-      <span class="demo-control-label" id="demo-font-label">Шрифт</span>
+      <span class="demo-control-label" id="demo-font-label">Type</span>
       <button class="demo-chip demo-font-btn" type="button" data-font-choice="mplus" aria-pressed="true">M PLUS Rounded</button>
       <button class="demo-chip demo-font-btn" type="button" data-font-choice="onest" aria-pressed="false">Onest</button>
       <button class="demo-chip demo-font-btn" type="button" data-font-choice="nunito" aria-pressed="false">Nunito</button>
       <button class="demo-chip demo-font-btn" type="button" data-font-choice="rubik" aria-pressed="false">Rubik</button>
     </div>
 
+    <div class="demo-control-group" role="group" aria-labelledby="demo-theme-label">
+      <span class="demo-control-label" id="demo-theme-label">Light</span>
+      <button class="demo-chip demo-theme-btn" type="button" data-theme-choice="system" aria-pressed="true">match the system</button>
+      <button class="demo-chip demo-theme-btn" type="button" data-theme-choice="light" aria-pressed="false">day</button>
+      <button class="demo-chip demo-theme-btn" type="button" data-theme-choice="dark" aria-pressed="false">night</button>
+    </div>
+
     <div class="demo-control-group">
-      <span class="demo-control-label" id="demo-replay-label">Движение</span>
-      <button id="demo-replay" class="demo-chip" type="button" aria-describedby="demo-replay-label">показать ещё раз</button>
+      <span class="demo-control-label" id="demo-replay-label">Motion</span>
+      <button id="demo-replay" class="demo-chip" type="button" aria-describedby="demo-replay-label">play it again</button>
     </div>
   </div>
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">01</span>
-    <span class="demo-marker__name">Марка</span>
+    <span class="demo-marker__name">The mark</span>
     <span class="demo-marker__note">.krk-hand</span>
   </h2>
 
@@ -648,30 +697,36 @@
         </svg>
       <h1 class="demo-header__title">Karakuli</h1>
     </div>
-    <p class="krk-hand demo-header__tagline">«бумага, чернила и немного каляк»</p>
+    <p class="krk-hand demo-header__tagline">“paper, ink, and a few scribbles”</p>
   </header>
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">02</span>
-    <span class="demo-marker__name">Три экрана</span>
+    <span class="demo-marker__name">Three screens</span>
     <span class="demo-marker__note">.krk-card--wash-* · .krk-tabs · .krk-list · .krk-pillnav · .krk-moment</span>
   </h2>
 
-  <section class="demo-plate" id="screens" aria-label="Три экрана">
+  <section class="demo-plate" id="screens" aria-label="Three screens">
     <p class="demo-note">
-      Один набор токенов на трёх точках «шкалы энергии» (STYLE.md §8): тихий трекер сил,
-      разговорчивые рецепты и онбординг, которому позволено потратить цвет.
+      One set of tokens at three points on the energy dial (STYLE.md §8): a quiet
+      energy tracker, a chattier recipe screen, and an onboarding that is allowed
+      to spend its colour.
     </p>
     <div class="demo-phones">
 
-      <!-- SCREEN A — «Силы», calm exhaustion tracker -->
+      <!-- SCREEN A — "Energy", a calm exhaustion tracker -->
       <div class="demo-phone">
         <div class="demo-phone__screen">
-          <p style="font-size:var(--krk-text-xl);font-weight:500;">Как ты сегодня?</p>
-          <p class="krk-list-row__meta" style="margin-top:var(--krk-space-1);margin-bottom:var(--krk-space-5);">Сегодня, 17 августа</p>
+          <p style="font-size:var(--krk-text-xl);font-weight:500;">How are you today?</p>
+          <p class="krk-list-row__meta" style="margin-top:var(--krk-space-1);margin-bottom:var(--krk-space-5);">Today, 17 August</p>
 
-          <div class="krk-card krk-card--wash-sage">
-            <p style="font-weight:500;margin-bottom:var(--krk-space-4);">Сколько сил осталось?</p>
+          <!-- Plain paper-2, not a wash. This is a calm base screen, and STYLE.md
+               §5 keeps those to paper and ink: a tinted slab here is the loudest
+               mark on the page, and the scale underneath it is what the screen is
+               actually about. The four washes are shown in the gallery, on cards
+               whose job is to be a wash. -->
+          <div class="krk-card">
+            <p style="font-weight:500;margin-bottom:var(--krk-space-4);">How much is left today?</p>
             <div class="demo-energy-scale">
               <label class="demo-energy-item">
                 <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -679,7 +734,7 @@
                   <path d="M20,22 C23,22 26,22 27,22 C25,25 22,27 20,29 C23,29 25,29 27,29"/>
                   <path d="M28,31 C30,31 32,31 33,31 C31,33 29,34 28,36 C30,36 31,36 33,36"/>
                 </svg>
-                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Совсем нет сил" />
+                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Nothing left" />
               </label>
               <label class="demo-energy-item">
                 <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -688,7 +743,7 @@
                   <path d="M28,18 C29,22 28,26 27,24"/>
                   <path d="M14,8 L12,6 M34,8 L36,6"/>
                 </svg>
-                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Мало сил" />
+                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Running low" />
               </label>
               <label class="demo-energy-item">
                 <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -697,7 +752,7 @@
                   <path d="M9,35 C9,33 39,33 39,35 C39,37 9,37 9,35"/>
                   <path d="M20,19 C22,15 18,12 20,8 M28,19 C30,15 26,12 28,8"/>
                 </svg>
-                <input type="radio" name="krk-energy" class="krk-radio" checked aria-label="Средне" />
+                <input type="radio" name="krk-energy" class="krk-radio" checked aria-label="Middling" />
               </label>
               <label class="demo-energy-item">
                 <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -706,28 +761,28 @@
                   <path d="M24,26 C19.8,26.3 17.7,24.2 18,20 C22.2,19.7 24.3,21.8 24,26 M24,26 C28.2,26.3 30.3,24.2 30,20 C25.8,19.7 23.7,21.8 24,26"/>
                   <path d="M16,40 L18,39 M30,39 L32,40"/>
                 </svg>
-                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Много сил" />
+                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Good" />
               </label>
               <label class="demo-energy-item">
                 <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M24,17 C29,16 32,20 31,24 C33,28 29,32 24,31 C19,32 15,28 16,24 C15,19 19,17 24,17"/>
                   <path d="M24,15 L24,8 M29,17 L34,11 M33,24 L41,24 M29,31 L33,37 M24,33 L24,40 M19,31 L15,36 M16,24 L8,25 M19,17 L14,12"/>
                 </svg>
-                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Полон сил" />
+                <input type="radio" name="krk-energy" class="krk-radio" aria-label="Full" />
               </label>
             </div>
           </div>
 
-          <button class="krk-btn krk-btn--outline" style="margin-top:var(--krk-space-5);" type="button">Сохранить</button>
+          <button class="krk-btn krk-btn--outline" style="margin-top:var(--krk-space-5);" type="button">Save</button>
 
           <hr class="krk-divider" />
 
-          <p class="krk-list-row__meta">На этой неделе</p>
+          <p class="krk-list-row__meta">This week</p>
           <ul class="krk-list">
-            <li class="krk-list-row"><span>Понедельник</span><span class="krk-list-row__meta">полон сил</span></li>
-            <li class="krk-list-row"><span>Вторник</span><span class="krk-list-row__meta">средне</span></li>
-            <li class="krk-list-row"><span>Среда</span><span class="krk-list-row__meta">мало сил</span></li>
-            <li class="krk-list-row"><span>Четверг</span><span class="krk-list-row__meta">средне</span></li>
+            <li class="krk-list-row"><span>Monday</span><span class="krk-list-row__meta">full</span></li>
+            <li class="krk-list-row"><span>Tuesday</span><span class="krk-list-row__meta">middling</span></li>
+            <li class="krk-list-row"><span>Wednesday</span><span class="krk-list-row__meta">running low</span></li>
+            <li class="krk-list-row"><span>Thursday</span><span class="krk-list-row__meta">middling</span></li>
           </ul>
         </div>
         <div class="demo-corner-moon">
@@ -738,27 +793,27 @@
         </div>
       </div>
 
-      <!-- SCREEN B — «Рецепты», playful -->
+      <!-- SCREEN B — "Recipes", playful -->
       <div class="demo-phone">
         <div class="demo-phone__screen krk-dotgrid">
           <div class="krk-tabs">
-            <button class="krk-tab is-active" type="button">Завтрак</button>
-            <button class="krk-tab" type="button">Обед</button>
-            <button class="krk-tab" type="button">Ужин</button>
+            <button class="krk-tab is-active" type="button">Breakfast</button>
+            <button class="krk-tab" type="button">Lunch</button>
+            <button class="krk-tab" type="button">Dinner</button>
           </div>
 
           <ul class="krk-list" style="margin-top:var(--krk-space-4);">
             <li class="krk-list-row">
-              <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Мука</span></label>
+              <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Flour</span></label>
             </li>
             <li class="krk-list-row">
-              <label class="krk-choice"><input type="checkbox" class="krk-check" /><span>Яйца</span></label>
+              <label class="krk-choice"><input type="checkbox" class="krk-check" /><span>Eggs</span></label>
             </li>
             <li class="krk-list-row">
-              <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Творог</span></label>
+              <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Curd cheese</span></label>
             </li>
             <li class="krk-list-row">
-              <label class="krk-choice"><input type="checkbox" class="krk-check" /><span>Изюм</span></label>
+              <label class="krk-choice"><input type="checkbox" class="krk-check" /><span>Raisins</span></label>
             </li>
           </ul>
 
@@ -770,27 +825,27 @@
                 <path d="M13,24 C13,20 35,20 35,24 M22,20 C22,17 26,17 26,20"/>
                 <path d="M18,17 C20,14 16,11 18,8 M24,17 C26,13 22,10 24,6 M30,17 C32,14 28,11 30,8"/>
               </svg>
-              <p style="font-weight:500;font-size:var(--krk-text-lg);">Сырники</p>
+              <p style="font-weight:500;font-size:var(--krk-text-lg);">Curd pancakes</p>
             </div>
-            <p class="krk-list-row__meta" style="margin-top:var(--krk-space-1);">20 минут · просто</p>
+            <p class="krk-list-row__meta" style="margin-top:var(--krk-space-1);">20 minutes · easy</p>
           </div>
         </div>
 
         <nav class="krk-pillnav">
-          <button class="krk-pillnav__item" type="button" aria-label="Рецепты">
+          <button class="krk-pillnav__item" type="button" aria-label="Recipes">
             <svg width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M10,24 C11,32 17,36 24,36 C31,36 37,32 38,24 C38,23 10,23 10,24"/>
               <path d="M19,36 C19,39 29,39 29,36"/>
               <path d="M13,20 C18,17 30,12 40,9 M14,23 C19,20 31,15 41,12"/>
             </svg>
           </button>
-          <button class="krk-pillnav__item is-active" type="button" aria-label="Избранное">
+          <button class="krk-pillnav__item is-active" type="button" aria-label="Favourites">
             <svg width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M24,16 C21,10 12,11 12,19 C12,26 19,30 23,37 C25,32 34,27 35,18 C35,11 27,9 24,16"/>
               <path d="M22,14 C20,12 17,11 14,13"/>
             </svg>
           </button>
-          <button class="krk-pillnav__item" type="button" aria-label="Список покупок">
+          <button class="krk-pillnav__item" type="button" aria-label="Shopping list">
             <svg width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M21,30.8 C25,33 24,37 19.2,38.8 C15,40.3 11.5,40 11,39.2 C10.3,36 10.7,33.5 12.8,31.2 C15.5,28.5 18.5,28.8 21,30.8"/>
               <path d="M21,30 C26,27 32,22 36,18 C38,16.5 39,17.5 37.5,19"/>
@@ -819,7 +874,7 @@
             </svg>
           </div>
 
-          <p class="krk-hand" style="font-size:var(--krk-text-2xl);">Всё получится!</p>
+          <p class="krk-hand" style="font-size:var(--krk-text-2xl);">It will all work out!</p>
 
           <div class="krk-moment demo-moment-grid">
             <span class="krk-bloom krk-doodle-blue">
@@ -863,8 +918,8 @@
             </span>
           </div>
 
-          <button id="krk-cta-start" class="krk-btn krk-btn--primary krk-arrow-inline" type="button">Начать</button>
-          <p class="krk-list-row__meta">цвет — только по праздникам</p>
+          <button id="krk-cta-start" class="krk-btn krk-btn--primary krk-arrow-inline" type="button">Start</button>
+          <p class="krk-list-row__meta">colour, only when it is earned</p>
         </div>
       </div>
 
@@ -873,13 +928,13 @@
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">03</span>
-    <span class="demo-marker__name">Бумага и чернила</span>
-    <span class="demo-marker__note">web/tokens.css · STYLE.md §1</span>
+    <span class="demo-marker__name">Paper and ink</span>
+    <span class="demo-marker__note">web/tokens.css · web/theme.js · STYLE.md §1</span>
   </h2>
 
-  <section class="demo-plate" aria-label="Палитра">
+  <section class="demo-plate" aria-label="Palette">
     <div class="demo-group">
-      <h3 class="demo-group__name">Бумага и чернила — тёплые, никогда не нейтральные</h3>
+      <h3 class="demo-group__name">Paper and ink — warm, never neutral</h3>
       <div class="demo-swatch-row">
         <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-paper);"></span><span class="demo-swatch__name">--krk-paper</span></div>
         <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-paper-2);"></span><span class="demo-swatch__name">--krk-paper-2</span></div>
@@ -890,8 +945,42 @@
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Перьевые яркие — только иллюстрации и крупные акценты</h3>
-      <p class="demo-note">Ни один из этих четырёх никогда не идёт в мелкий текст.</p>
+      <h3 class="demo-group__name">Day and night — the same tokens</h3>
+      <p class="demo-note">
+        No colour here is named twice: every token is declared once, as a
+        <code>light-dark()</code> pair, and both halves are visible at once — whichever
+        theme the page itself happens to be open in. The brights on night paper are
+        lifted, not inverted: a dark bright stops reading as a bright.
+      </p>
+      <div class="demo-grounds">
+        <div class="demo-ground demo-ground--day">
+          <p style="font-weight:500;margin-bottom:var(--krk-space-4);">Paper</p>
+          <p class="krk-list-row__meta" style="margin-bottom:var(--krk-space-4);">ink, soft and faint</p>
+          <div class="demo-swatch-row">
+            <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-paper-2);"></span><span class="demo-swatch__name">paper-2</span></div>
+            <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-ink);"></span><span class="demo-swatch__name">ink</span></div>
+            <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-pen-blue);"></span><span class="demo-swatch__name">pen-blue</span></div>
+            <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-wash-sage);"></span><span class="demo-swatch__name">wash-sage</span></div>
+          </div>
+          <hr class="krk-divider">
+        </div>
+        <div class="demo-ground demo-ground--night">
+          <p style="font-weight:500;margin-bottom:var(--krk-space-4);">Night</p>
+          <p class="krk-list-row__meta" style="margin-bottom:var(--krk-space-4);">ink, soft and faint</p>
+          <div class="demo-swatch-row">
+            <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-paper-2);"></span><span class="demo-swatch__name">paper-2</span></div>
+            <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-ink);"></span><span class="demo-swatch__name">ink</span></div>
+            <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-pen-blue);"></span><span class="demo-swatch__name">pen-blue</span></div>
+            <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-wash-sage);"></span><span class="demo-swatch__name">wash-sage</span></div>
+          </div>
+          <hr class="krk-divider">
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-group">
+      <h3 class="demo-group__name">Pen brights — illustration and large accents only</h3>
+      <p class="demo-note">None of these four ever goes into small text.</p>
       <div class="demo-swatch-row">
         <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-pen-blue);"></span><span class="demo-swatch__name">--krk-pen-blue</span></div>
         <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-pen-green);"></span><span class="demo-swatch__name">--krk-pen-green</span></div>
@@ -901,7 +990,7 @@
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Заливки — фон карточек и виджетов</h3>
+      <h3 class="demo-group__name">Washes — card and widget backgrounds</h3>
       <div class="demo-swatch-row">
         <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-wash-lavender);"></span><span class="demo-swatch__name">--krk-wash-lavender</span></div>
         <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-wash-sage);"></span><span class="demo-swatch__name">--krk-wash-sage</span></div>
@@ -911,10 +1000,10 @@
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Смысловые</h3>
+      <h3 class="demo-group__name">Semantic</h3>
       <p class="demo-note">
-        <code>--krk-accent</code> по умолчанию равен чернилам: приложение вправе поменять его
-        ровно на один перьевой яркий или один свой фирменный цвет — и на этом всё.
+        <code>--krk-accent</code> is the ink by default. An app may change it to exactly one
+        pen bright, or one signature colour of its own — and that is the whole allowance.
       </p>
       <div class="demo-swatch-row">
         <div class="demo-swatch"><span class="demo-swatch__chip" style="background:var(--krk-accent);"></span><span class="demo-swatch__name">--krk-accent</span></div>
@@ -925,102 +1014,103 @@
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">04</span>
-    <span class="demo-marker__name">Типографика</span>
-    <span class="demo-marker__note">--krk-font-sans · --krk-font-hand · шкала xs → 3xl</span>
+    <span class="demo-marker__name">Type</span>
+    <span class="demo-marker__note">--krk-font-sans · --krk-font-hand · the xs → 3xl ladder</span>
   </h2>
 
-  <section class="demo-plate" aria-label="Типографика">
+  <section class="demo-plate" aria-label="Type">
     <p class="demo-note">
-      M PLUS Rounded 1c держит весь интерфейс: у неё скруглённые концы штрихов, поэтому
-      она не спорит с пером. Shantell Sans — вторая рука, и только для акцентов:
-      подпись, поздравление, одно слово на экране. Обе несут полную кириллицу.
+      M PLUS Rounded 1c carries the whole interface: its rounded terminals don't argue
+      with the pen. Shantell Sans is the second hand, and only ever an accent — a caption,
+      a greeting, one word on a screen. Both faces carry full Cyrillic as well as Latin.
     </p>
 
     <div class="demo-type-row">
       <span class="demo-type-row__token">--krk-text-3xl</span>
-      <span class="demo-type-row__sample" style="font-size:var(--krk-text-3xl);font-weight:700;">Съешь ещё этих мягких булок</span>
+      <span class="demo-type-row__sample" style="font-size:var(--krk-text-3xl);font-weight:700;">Eat a few more soft rolls</span>
     </div>
     <div class="demo-type-row">
       <span class="demo-type-row__token">--krk-text-2xl</span>
-      <span class="demo-type-row__sample" style="font-size:var(--krk-text-2xl);font-weight:700;">Да выпей же чаю на веранде</span>
+      <span class="demo-type-row__sample" style="font-size:var(--krk-text-2xl);font-weight:700;">And do have some tea outside</span>
     </div>
     <div class="demo-type-row">
       <span class="demo-type-row__token">--krk-text-xl</span>
-      <span class="demo-type-row__sample" style="font-size:var(--krk-text-xl);font-weight:500;">Съешь ещё этих мягких французских булок</span>
+      <span class="demo-type-row__sample" style="font-size:var(--krk-text-xl);font-weight:500;">Eat a few more of these soft French rolls</span>
     </div>
     <div class="demo-type-row">
       <span class="demo-type-row__token">--krk-text-lg</span>
-      <span class="demo-type-row__sample" style="font-size:var(--krk-text-lg);">Съешь ещё этих мягких французских булок</span>
+      <span class="demo-type-row__sample" style="font-size:var(--krk-text-lg);">Eat a few more of these soft French rolls</span>
     </div>
     <div class="demo-type-row">
       <span class="demo-type-row__token">--krk-text-base</span>
-      <span class="demo-type-row__sample" style="font-size:var(--krk-text-base);">Съешь ещё этих мягких французских булок, да выпей же чаю — основной размер, вес 500, интерлиньяж 1.55.</span>
+      <span class="demo-type-row__sample" style="font-size:var(--krk-text-base);">Eat a few more of these soft French rolls, and do have some tea — the base size, weight 500, line-height 1.55.</span>
     </div>
     <div class="demo-type-row">
       <span class="demo-type-row__token">--krk-text-sm</span>
-      <span class="demo-type-row__sample krk-list-row__meta">Съешь ещё этих мягких французских булок · подписи и метаданные</span>
+      <span class="demo-type-row__sample krk-list-row__meta">Eat a few more of these soft French rolls · captions and metadata</span>
     </div>
     <div class="demo-type-row">
       <span class="demo-type-row__token">--krk-text-xs</span>
-      <span class="demo-type-row__sample" style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);">Съешь ещё этих мягких французских булок · нижняя граница</span>
+      <span class="demo-type-row__sample" style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);">Eat a few more of these soft French rolls · the lower bound</span>
     </div>
     <div class="demo-type-row">
       <span class="demo-type-row__token">--krk-font-hand</span>
-      <span class="demo-type-row__sample krk-hand" style="font-size:var(--krk-text-xl);">Съешь ещё этих мягких французских булок</span>
+      <span class="demo-type-row__sample krk-hand" style="font-size:var(--krk-text-xl);">Eat a few more of these soft French rolls</span>
     </div>
   </section>
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">05</span>
-    <span class="demo-marker__name">Перо</span>
+    <span class="demo-marker__name">The pen</span>
     <span class="demo-marker__note">--krk-stroke-ui / -icon / -hero · .krk-boil · .krk-crayon</span>
   </h2>
 
-  <section class="demo-plate" aria-label="Перо">
+  <section class="demo-plate" aria-label="The pen">
     <p class="demo-note">
-      Одно перо на всю систему: только штрих, круглые концы и стыки, кубические кривые,
-      никаких идеальных окружностей и прямых. Дрожь запечена в самих координатах пути —
-      2–4% от холста — и никогда не изображается фильтром поверх ровной геометрии.
+      One pen for the whole system: stroke only, round caps and joins, cubic curves, no
+      perfect circles and no ruler-straight lines. The tremble is baked into the path
+      coordinates themselves — 2–4% of the canvas — and is never faked with a filter laid
+      over exact geometry.
     </p>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Три толщины, каждая на своём холсте</h3>
+      <h3 class="demo-group__name">Three weights, each on its own canvas</h3>
       <div class="demo-pen-row">
         <div class="demo-spec">
           <span class="demo-spec__label">--krk-stroke-ui · 1.5px</span>
           <div class="demo-spec__body">
             <span style="display:block;width:120px;height:72px;border:var(--krk-stroke-ui) solid var(--krk-ink);border-radius:18px 22px 20px 16px / 20px 16px 22px 18px;"></span>
           </div>
-          <span class="demo-spec__label">границы интерфейса</span>
+          <span class="demo-spec__label">interface borders</span>
         </div>
         <div class="demo-spec">
-          <span class="demo-spec__label">--krk-stroke-icon · 2.8 на 48</span>
+          <span class="demo-spec__label">--krk-stroke-icon · 2.8 on 48</span>
           <div class="demo-spec__body">
-            <span class="demo-pen-sample" style="display:block;width:72px;height:72px;" data-src="../doodles/leaf.svg" role="img" aria-label="лист"></span>
+            <span class="demo-pen-sample" style="display:block;width:72px;height:72px;" data-src="../doodles/leaf.svg" role="img" aria-label="leaf"></span>
           </div>
-          <span class="demo-spec__label">мотивы и иконки</span>
+          <span class="demo-spec__label">motifs and icons</span>
         </div>
         <div class="demo-spec">
-          <span class="demo-spec__label">--krk-stroke-hero · 7 на 200</span>
+          <span class="demo-spec__label">--krk-stroke-hero · 7 on 200</span>
           <div class="demo-spec__body">
             <span class="demo-pen-sample" style="display:block;width:110px;height:110px;" data-src="../characters/pelmen-idle.svg" role="img" aria-label="Пельмень"></span>
           </div>
-          <span class="demo-spec__label">крупные иллюстрации</span>
+          <span class="demo-spec__label">large illustrations</span>
         </div>
       </div>
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Рука против циркуля</h3>
+      <h3 class="demo-group__name">The hand against the compass</h3>
       <div class="demo-pen-row">
         <div class="demo-spec">
-          <span class="demo-spec__label">перо — дрожь в координатах</span>
+          <span class="demo-spec__label">the pen — tremble in the coordinates</span>
           <svg width="96" height="96" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--krk-ink);" aria-hidden="true">
             <path d="M23.5,7.4 C31.8,6.6 40.6,13.2 40.2,22.6 C39.8,32.4 33.4,41.2 23.2,40.6 C14.2,40 6.8,32.8 7.8,23.2 C8.7,14.6 15.2,8.4 23.5,7.4 C25.6,7.2 27.6,7.9 29.2,9.2" />
           </svg>
         </div>
         <div class="demo-spec">
-          <span class="demo-spec__label">циркуль — так нельзя</span>
+          <span class="demo-spec__label">the compass — not allowed</span>
           <svg width="96" height="96" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--krk-ink-faint);" aria-hidden="true">
             <circle cx="24" cy="24" r="16.5" />
           </svg>
@@ -1029,25 +1119,25 @@
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Кипение и грифель</h3>
+      <h3 class="demo-group__name">Boil and crayon</h3>
       <p class="demo-note">
-        Кипение смещает линию примерно на два пикселя, поэтому на мелком мотиве его
-        попросту не видно — рисуйте крупно или не обещайте его вовсе. Грифельная
-        зернистость живёт только на героическом холсте 200×200: на иконке она читается
-        как шум, а не как фактура.
+        The boil displaces the line by about two pixels, so on a small motif there is
+        simply nothing to see — draw it big, or don't promise it at all. The crayon grain
+        lives only on the 200×200 hero canvas: at icon size it reads as noise rather than
+        as texture.
       </p>
       <div class="demo-pen-row">
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-boil · 140px</span>
-          <span class="demo-motif-lg krk-boil" data-src="../doodles/tree.svg" role="img" aria-label="дерево, живая линия"></span>
+          <span class="demo-motif-lg krk-boil" data-src="../doodles/tree.svg" role="img" aria-label="tree, living line"></span>
         </div>
         <div class="demo-spec">
-          <span class="demo-spec__label">без кипения</span>
-          <span class="demo-motif-lg" data-src="../doodles/tree.svg" role="img" aria-label="дерево, неподвижная линия"></span>
+          <span class="demo-spec__label">no boil</span>
+          <span class="demo-motif-lg" data-src="../doodles/tree.svg" role="img" aria-label="tree, still line"></span>
         </div>
         <div class="demo-spec">
-          <span class="demo-spec__label">.krk-crayon · герой</span>
-          <span class="demo-hero-lg krk-crayon" data-src="../characters/baton-idle.svg" role="img" aria-label="Батон с грифельной зернистостью"></span>
+          <span class="demo-spec__label">.krk-crayon · hero</span>
+          <span class="demo-hero-lg krk-crayon" data-src="../characters/baton-idle.svg" role="img" aria-label="Батон with crayon grain"></span>
         </div>
       </div>
     </div>
@@ -1055,25 +1145,25 @@
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">06</span>
-    <span class="demo-marker__name">Витрина</span>
-    <span class="demo-marker__note">каждый класс web/karakuli.css, в каждом состоянии</span>
+    <span class="demo-marker__name">The gallery</span>
+    <span class="demo-marker__note">every class in web/karakuli.css, in every state</span>
   </h2>
 
-  <section class="demo-plate" id="gallery" aria-label="Витрина компонентов">
+  <section class="demo-plate" id="gallery" aria-label="Component gallery">
     <p class="demo-note">
-      Состояния, которым нужен курсор или табуляция — <code>:hover</code> и
-      <code>:focus-visible</code> — показаны дважды: живыми на спокойном образце и
-      нарисованными на неподвижном двойнике. Галерея, где они только живые, показывала бы
-      три состояния кнопки из четырёх одной и той же картинкой.
+      The states that need a pointer or a tab stop — <code>:hover</code> and
+      <code>:focus-visible</code> — are shown twice: live on the resting specimen, and
+      painted onto a still twin beside it. A gallery that only showed them live would show
+      three of a button's four states with the same picture.
     </p>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Кнопки</h3>
+      <h3 class="demo-group__name">Buttons</h3>
       <div class="demo-specs">
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-btn--primary</span>
           <div class="demo-spec__body">
-            <button class="krk-btn krk-btn--primary" type="button">Сохранить</button>
+            <button class="krk-btn krk-btn--primary" type="button">Save</button>
             <button class="krk-btn krk-btn--primary demo-hover" type="button" tabindex="-1">hover</button>
             <button class="krk-btn krk-btn--primary demo-focus" type="button" tabindex="-1">focus</button>
             <button class="krk-btn krk-btn--primary demo-active" type="button" tabindex="-1">active</button>
@@ -1082,7 +1172,7 @@
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-btn--outline</span>
           <div class="demo-spec__body">
-            <button class="krk-btn krk-btn--outline" type="button">Отмена</button>
+            <button class="krk-btn krk-btn--outline" type="button">Cancel</button>
             <button class="krk-btn krk-btn--outline demo-hover" type="button" tabindex="-1">hover</button>
             <button class="krk-btn krk-btn--outline demo-focus" type="button" tabindex="-1">focus</button>
           </div>
@@ -1090,7 +1180,7 @@
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-btn--ghost</span>
           <div class="demo-spec__body">
-            <button class="krk-btn krk-btn--ghost" type="button">Позже</button>
+            <button class="krk-btn krk-btn--ghost" type="button">Later</button>
             <button class="krk-btn krk-btn--ghost demo-hover" type="button" tabindex="-1">hover</button>
             <button class="krk-btn krk-btn--ghost demo-focus" type="button" tabindex="-1">focus</button>
           </div>
@@ -1098,109 +1188,110 @@
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-btn--wobbly</span>
           <div class="demo-spec__body">
-            <button class="krk-btn krk-btn--wobbly" type="button">Начать</button>
-            <button class="krk-btn krk-btn--wobbly krk-btn--primary" type="button">Заполненная</button>
+            <button class="krk-btn krk-btn--wobbly" type="button">Start</button>
+            <button class="krk-btn krk-btn--wobbly krk-btn--primary" type="button">Filled</button>
           </div>
-          <span class="demo-spec__label">вторая — сильная форма: заливка акцентом, без границы</span>
+          <span class="demo-spec__label">the second is the strong form: accent fill, no border</span>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-btn--danger · demo-only</span>
           <div class="demo-spec__body">
-            <button class="krk-btn krk-btn--primary krk-btn--danger" type="button">Удалить</button>
+            <button class="krk-btn krk-btn--primary krk-btn--danger" type="button">Delete</button>
           </div>
-          <span class="demo-spec__label">собрана на этой странице из --krk-danger, в наборе её нет</span>
+          <span class="demo-spec__label">assembled on this page out of --krk-danger; the kit has no such class</span>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-arrow-inline</span>
           <div class="demo-spec__body">
-            <button class="krk-btn krk-btn--outline krk-arrow-inline" type="button">Дальше</button>
+            <button class="krk-btn krk-btn--outline krk-arrow-inline" type="button">Next</button>
+            <button class="krk-btn krk-btn--primary krk-arrow-inline" type="button">Next</button>
           </div>
-          <span class="demo-spec__label">стрелка нарисована чернилами внутри data-URI, поэтому живёт на бумаге, а не на заливке</span>
+          <span class="demo-spec__label">the arrow is a stencil, not a picture: currentColor gives it its ink, so it reads on paper and on a fill alike</span>
         </div>
       </div>
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Карточки</h3>
+      <h3 class="demo-group__name">Cards</h3>
       <div class="demo-specs">
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-card</span>
-          <div class="krk-card" style="width:210px;">Бумага-2, без тени. Разделение даёт заливка, а не подъём.</div>
+          <div class="krk-card" style="width:210px;">Paper-2, no shadow. The fill does the separating, not a lift.</div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-card--wash-sage</span>
-          <div class="krk-card krk-card--wash-sage" style="width:210px;">Шалфей</div>
+          <div class="krk-card krk-card--wash-sage" style="width:210px;">Sage</div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-card--wash-butter</span>
-          <div class="krk-card krk-card--wash-butter" style="width:210px;">Масло</div>
+          <div class="krk-card krk-card--wash-butter" style="width:210px;">Butter</div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-card--wash-blush</span>
-          <div class="krk-card krk-card--wash-blush" style="width:210px;">Румянец</div>
+          <div class="krk-card krk-card--wash-blush" style="width:210px;">Blush</div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-card--wash-lavender</span>
-          <div class="krk-card krk-card--wash-lavender" style="width:210px;">Лаванда</div>
+          <div class="krk-card krk-card--wash-lavender" style="width:210px;">Lavender</div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-card--line</span>
-          <div class="krk-card krk-card--line" style="width:210px;">Бумага и волосяная линия чернил</div>
+          <div class="krk-card krk-card--line" style="width:210px;">Paper and a hairline of ink</div>
         </div>
       </div>
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Поля</h3>
+      <h3 class="demo-group__name">Fields</h3>
       <div class="demo-specs">
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-field · .krk-label · .krk-input</span>
           <div class="krk-field demo-field-narrow">
-            <label class="krk-label" for="demo-input-name">Имя</label>
-            <input id="demo-input-name" class="krk-input" type="text" placeholder="Как тебя зовут?" />
+            <label class="krk-label" for="demo-input-name">Name</label>
+            <input id="demo-input-name" class="krk-input" type="text" placeholder="Your name?" />
           </div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-input · focus</span>
           <div class="krk-field demo-field-narrow">
-            <label class="krk-label" for="demo-input-focus">Имя</label>
+            <label class="krk-label" for="demo-input-focus">Name</label>
             <input id="demo-input-focus" class="krk-input demo-focus" type="text" value="Пельмень" tabindex="-1" readonly />
           </div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-textarea</span>
           <div class="krk-field demo-field-narrow">
-            <label class="krk-label" for="demo-textarea">Заметка</label>
-            <textarea id="demo-textarea" class="krk-textarea" placeholder="Как прошёл день?"></textarea>
+            <label class="krk-label" for="demo-textarea">Note</label>
+            <textarea id="demo-textarea" class="krk-textarea" placeholder="How was your day?"></textarea>
           </div>
         </div>
       </div>
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Выбор</h3>
+      <h3 class="demo-group__name">Choices</h3>
       <div class="demo-specs">
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-check · .krk-choice</span>
           <div class="demo-spec__body">
-            <label class="krk-choice"><input type="checkbox" class="krk-check" /><span>Пусто</span></label>
-            <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Отмечено</span></label>
+            <label class="krk-choice"><input type="checkbox" class="krk-check" /><span>Empty</span></label>
+            <label class="krk-choice"><input type="checkbox" class="krk-check" checked /><span>Ticked</span></label>
             <label class="krk-choice"><input type="checkbox" class="krk-check demo-focus" checked tabindex="-1" /><span>focus</span></label>
           </div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-radio</span>
           <div class="demo-spec__body">
-            <label class="krk-choice"><input type="radio" name="demo-time" class="krk-radio" checked /><span>Утро</span></label>
-            <label class="krk-choice"><input type="radio" name="demo-time" class="krk-radio" /><span>Вечер</span></label>
+            <label class="krk-choice"><input type="radio" name="demo-time" class="krk-radio" checked /><span>Morning</span></label>
+            <label class="krk-choice"><input type="radio" name="demo-time" class="krk-radio" /><span>Evening</span></label>
             <label class="krk-choice"><input type="radio" name="demo-time-2" class="krk-radio demo-focus" checked tabindex="-1" /><span>focus</span></label>
           </div>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-toggle</span>
           <div class="demo-spec__body">
-            <label class="krk-choice"><input type="checkbox" class="krk-toggle" /><span>Выключен</span></label>
-            <label class="krk-choice"><input type="checkbox" class="krk-toggle" checked /><span>Включён</span></label>
+            <label class="krk-choice"><input type="checkbox" class="krk-toggle" /><span>Off</span></label>
+            <label class="krk-choice"><input type="checkbox" class="krk-toggle" checked /><span>On</span></label>
             <label class="krk-choice"><input type="checkbox" class="krk-toggle demo-focus" checked tabindex="-1" /><span>focus</span></label>
           </div>
         </div>
@@ -1208,52 +1299,52 @@
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Навигация</h3>
+      <h3 class="demo-group__name">Navigation</h3>
       <div class="demo-specs">
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-tabs · .krk-tab · .is-active</span>
           <div class="krk-tabs">
-            <button class="krk-tab is-active" type="button">Завтрак</button>
-            <button class="krk-tab" type="button">Обед</button>
+            <button class="krk-tab is-active" type="button">Breakfast</button>
+            <button class="krk-tab" type="button">Lunch</button>
             <button class="krk-tab demo-hover" type="button" tabindex="-1">hover</button>
           </div>
-          <span class="demo-spec__label">активную метит росчерк пера, а не прямая полоса</span>
+          <span class="demo-spec__label">a pen flourish marks the active tab, not a straight bar</span>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-pillnav · .krk-pillnav__item</span>
-          <nav class="krk-pillnav" aria-label="Пример навигации">
-            <button class="krk-pillnav__item" type="button" aria-label="Дом"><span class="demo-ico" data-src="../doodles/pot.svg" aria-hidden="true"></span></button>
-            <button class="krk-pillnav__item is-active" type="button" aria-label="Избранное"><span class="demo-ico" data-src="../doodles/heart.svg" aria-hidden="true"></span></button>
-            <button class="krk-pillnav__item" type="button" aria-label="Заметки"><span class="demo-ico" data-src="../doodles/squiggle.svg" aria-hidden="true"></span></button>
+          <nav class="krk-pillnav" aria-label="Navigation example">
+            <button class="krk-pillnav__item" type="button" aria-label="Home"><span class="demo-ico" data-src="../doodles/pot.svg" aria-hidden="true"></span></button>
+            <button class="krk-pillnav__item is-active" type="button" aria-label="Favourites"><span class="demo-ico" data-src="../doodles/heart.svg" aria-hidden="true"></span></button>
+            <button class="krk-pillnav__item" type="button" aria-label="Notes"><span class="demo-ico" data-src="../doodles/squiggle.svg" aria-hidden="true"></span></button>
           </nav>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-pillnav--slider · .krk-pillnav__indicator</span>
-          <nav id="demo-slider-nav" class="krk-pillnav krk-pillnav--slider" aria-label="Пример переключателя экранов">
-            <button class="krk-pillnav__item is-active" type="button" data-screen="garden" aria-label="Сад"><span class="demo-ico" data-src="../doodles/tree.svg" aria-hidden="true"></span></button>
-            <button class="krk-pillnav__item" type="button" data-screen="sprouts" aria-label="Ростки"><span class="demo-ico" data-src="../doodles/sprout.svg" aria-hidden="true"></span></button>
-            <button class="krk-pillnav__item" type="button" data-screen="rest" aria-label="Пауза"><span class="demo-ico" data-src="../doodles/moon.svg" aria-hidden="true"></span></button>
+          <nav id="demo-slider-nav" class="krk-pillnav krk-pillnav--slider" aria-label="Screen selector example">
+            <button class="krk-pillnav__item is-active" type="button" data-screen="garden" aria-label="Garden"><span class="demo-ico" data-src="../doodles/tree.svg" aria-hidden="true"></span></button>
+            <button class="krk-pillnav__item" type="button" data-screen="sprouts" aria-label="Sprouts"><span class="demo-ico" data-src="../doodles/sprout.svg" aria-hidden="true"></span></button>
+            <button class="krk-pillnav__item" type="button" data-screen="rest" aria-label="Rest"><span class="demo-ico" data-src="../doodles/moon.svg" aria-hidden="true"></span></button>
           </nav>
-          <span class="demo-spec__label">нажми — маркер едет, дудл под ним становится бумагой</span>
+          <span class="demo-spec__label">press one — the marker travels, and the doodle under it turns to paper</span>
         </div>
       </div>
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Структура</h3>
+      <h3 class="demo-group__name">Structure</h3>
       <div class="demo-specs">
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-list · .krk-list-row · __meta</span>
           <ul class="krk-list" style="width:280px;">
-            <li class="krk-list-row"><span>Мука</span><span class="krk-list-row__meta">200 г</span></li>
-            <li class="krk-list-row"><span>Творог</span><span class="krk-list-row__meta">400 г</span></li>
-            <li class="krk-list-row"><span>Изюм</span><span class="krk-list-row__meta">горсть</span></li>
+            <li class="krk-list-row"><span>Flour</span><span class="krk-list-row__meta">200 g</span></li>
+            <li class="krk-list-row"><span>Curd cheese</span><span class="krk-list-row__meta">400 g</span></li>
+            <li class="krk-list-row"><span>Raisins</span><span class="krk-list-row__meta">a handful</span></li>
           </ul>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-divider</span>
           <div style="width:280px;"><hr class="krk-divider" /></div>
-          <span class="demo-spec__label">волнистая линия вместо ровного &lt;hr&gt;</span>
+          <span class="demo-spec__label">a wavy line in place of a ruled &lt;hr&gt;</span>
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-dotgrid</span>
@@ -1263,10 +1354,10 @@
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Моменты</h3>
+      <h3 class="demo-group__name">Moments</h3>
       <p class="demo-note">
-        Цвет появляется здесь и почти нигде больше: награда, первый запуск, поздравление.
-        Четыре перьевых ярких — это края штрихов, а не заливки.
+        Colour turns up here and almost nowhere else: a reward, a first run, a
+        congratulation. The four pen brights are the edges of strokes, never fills.
       </p>
       <div class="demo-specs">
         <div class="demo-spec">
@@ -1280,8 +1371,8 @@
         </div>
         <div class="demo-spec">
           <span class="demo-spec__label">.krk-hand</span>
-          <p class="krk-hand" style="font-size:var(--krk-text-2xl);">Всё получится!</p>
-          <span class="demo-spec__label">вторая рука — только на акцент, никогда на текст экрана</span>
+          <p class="krk-hand" style="font-size:var(--krk-text-2xl);">It will all work out!</p>
+          <span class="demo-spec__label">the second hand is for accents only, never for a screen&rsquo;s body text</span>
         </div>
       </div>
     </div>
@@ -1289,20 +1380,20 @@
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">07</span>
-    <span class="demo-marker__name">Движение</span>
+    <span class="demo-marker__name">Motion</span>
     <span class="demo-marker__note">.krk-enter-sprout · .krk-enter-draw · .krk-enter-rise · .krk-pulse</span>
   </h2>
 
-  <section class="demo-plate" aria-label="Движение">
+  <section class="demo-plate" aria-label="Motion">
     <p class="demo-note">
-      Три канонических входа, выбранных глазами на живом сравнении (черновая страница —
-      <a href="motion.html">demo/motion.html</a>). Дудлы прорастают россыпью, карточки
-      поднимаются волной, иконка внутри карточки дорисовывается сама. Кнопка
-      «показать ещё раз» вверху проигрывает всё заново.
+      The three canon entrances, chosen by eye against a live comparison (the draft page
+      is <a href="motion.html">demo/motion.html</a>). Doodles sprout in a scatter, cards
+      rise in a wave, and the icon inside a card draws its own stroke. The
+      “play it again” button at the top replays the lot.
     </p>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Дудлы прорастают — .krk-enter-sprout, россыпью</h3>
+      <h3 class="demo-group__name">Doodles sprout — .krk-enter-sprout, scattered</h3>
       <div id="demo-enter-motifs" class="demo-anim-motifs">
         <span class="demo-anim-motif krk-enter-sprout" style="--krk-baseline:89.6%;" data-src="../doodles/sprout.svg" aria-hidden="true"></span>
         <span class="demo-anim-motif krk-enter-sprout" style="--krk-baseline:89.6%;" data-src="../doodles/tree.svg" aria-hidden="true"></span>
@@ -1318,36 +1409,36 @@
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Карточки поднимаются — .krk-enter-rise, волной; иконка дорисовывается — .krk-enter-draw</h3>
+      <h3 class="demo-group__name">Cards rise — .krk-enter-rise, in a wave; the icon draws itself — .krk-enter-draw</h3>
       <div id="demo-enter-cards" class="demo-anim-cards">
         <div class="krk-card krk-card--wash-sage krk-enter-rise">
           <span class="demo-anim-card__icon krk-enter-draw" data-src="../doodles/cup-tea.svg" aria-hidden="true"></span>
-          <p style="margin-top:var(--krk-space-3);font-weight:500;">Утренний чай</p>
-          <p class="krk-list-row__meta">каждый день</p>
+          <p style="margin-top:var(--krk-space-3);font-weight:500;">Morning tea</p>
+          <p class="krk-list-row__meta">every day</p>
         </div>
         <div class="krk-card krk-card--wash-butter krk-enter-rise">
           <span class="demo-anim-card__icon krk-enter-draw" data-src="../doodles/bowl.svg" aria-hidden="true"></span>
-          <p style="margin-top:var(--krk-space-3);font-weight:500;">Завтрак</p>
-          <p class="krk-list-row__meta">20 минут</p>
+          <p style="margin-top:var(--krk-space-3);font-weight:500;">Breakfast</p>
+          <p class="krk-list-row__meta">20 minutes</p>
         </div>
         <div class="krk-card krk-card--wash-blush krk-enter-rise">
           <span class="demo-anim-card__icon krk-enter-draw" data-src="../doodles/heart.svg" aria-hidden="true"></span>
-          <p style="margin-top:var(--krk-space-3);font-weight:500;">Себе</p>
-          <p class="krk-list-row__meta">пять минут тишины</p>
+          <p style="margin-top:var(--krk-space-3);font-weight:500;">For yourself</p>
+          <p class="krk-list-row__meta">five quiet minutes</p>
         </div>
         <div class="krk-card krk-card--wash-lavender krk-enter-rise">
           <span class="demo-anim-card__icon krk-enter-draw" data-src="../doodles/moon.svg" aria-hidden="true"></span>
-          <p style="margin-top:var(--krk-space-3);font-weight:500;">Сон</p>
-          <p class="krk-list-row__meta">в 23:00</p>
+          <p style="margin-top:var(--krk-space-3);font-weight:500;">Sleep</p>
+          <p class="krk-list-row__meta">at 23:00</p>
         </div>
       </div>
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Приглашающий пульс — .krk-pulse</h3>
+      <h3 class="demo-group__name">The invitation pulse — .krk-pulse</h3>
     <p class="krk-list-row__meta demo-pulse-note">
-      Один маркер на экран: он дышит там, где будет следующее действие.
-      Ближний план — пустые лунки поля, обведена та, куда сядет следующий росток.
+      One marker per screen: it breathes where the next action would go. Close up: the
+      empty sockets of a field, with a ring around the one the next sprout will take.
     </p>
     <div class="demo-pulse-row">
       <svg class="demo-pulse-dot" viewBox="10 10 28 28" fill="none" aria-hidden="true">
@@ -1374,18 +1465,17 @@
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">08</span>
-    <span class="demo-marker__name">Звук</span>
-    <span class="demo-marker__note">web/sound.js · uisfx, набор zen, громкость 0.35</span>
+    <span class="demo-marker__name">Sound</span>
+    <span class="demo-marker__note">web/sound.js · uisfx, the zen pack, volume 0.35</span>
   </h2>
 
-  <section class="demo-plate" aria-label="Звук">
+  <section class="demo-plate" aria-label="Sound">
     <p class="demo-note">
-      Звук — не украшение, а подтверждение: он звучит там, где что-то действительно
-      произошло. Навигация молчит. Ниже — весь набор zen целиком, чтобы можно было
-      выбирать на слух.
+      Sound is confirmation, not decoration: it plays where something actually happened.
+      Navigation stays silent. Below is the whole zen pack, so a cue can be picked by ear.
     </p>
     <div id="krk-sound-board">
-      <h3 class="demo-group__name">Все реплики набора</h3>
+      <h3 class="demo-group__name">Every cue in the pack</h3>
       <div class="demo-buttons-row">
         <button class="krk-btn krk-btn--ghost" type="button" data-cue="hover">hover</button>
         <button class="krk-btn krk-btn--ghost" type="button" data-cue="press">press</button>
@@ -1412,28 +1502,28 @@
         <button class="krk-btn krk-btn--ghost" type="button" data-cue="reward">reward</button>
         <button class="krk-btn krk-btn--ghost" type="button" data-cue="achievement">achievement</button>
       </div>
-      <p style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);margin-top:var(--krk-space-2);">нажми и послушай — потом скажи, какой звук куда поставить</p>
+      <p style="font-size:var(--krk-text-xs);color:var(--krk-ink-soft);margin-top:var(--krk-space-2);">press one and listen, then say which sound belongs where</p>
     </div>
   </section>
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">09</span>
-    <span class="demo-marker__name">Мотивы</span>
+    <span class="demo-marker__name">Motifs</span>
     <span class="demo-marker__note">doodles/ · viewBox 0 0 48 48 · stroke 2.8 · currentColor</span>
   </h2>
 
-  <section class="demo-plate" aria-label="Мотивы">
+  <section class="demo-plate" aria-label="Motifs">
     <div class="demo-group">
-      <h3 class="demo-group__name">Поле</h3>
+      <h3 class="demo-group__name">The field</h3>
       <p class="demo-note">
-        Поле, а не таблица: рисунки крупнее своей клетки и потому находят друг на друга,
-        а стоят при этом все на одной линии земли. Там, где они пересекаются, замкнутые
-        подпути заливаются <strong>бумагой</strong> — лист, шляпка, ягода перестают
-        просвечивать, потому что лежат на бумаге, а не потому что их закрасили. Стебель
-        и щетинка не замыкаются и заливки не получают: это выводится из самого рисунка,
-        так что новый мотив приходит уже правильным.
+        A field, not a table: the drawings are larger than their own cells and so cross
+        one another, while all of them stand on one ground line. Where they overlap, the
+        closed subpaths are filled with <strong>paper</strong> — a leaf, a cap, a berry
+        stops being see-through because it lies on the paper, not because it was coloured
+        in. A stem and a bristle never close, so they take no fill: that is read off the
+        drawing itself, which is why a new motif arrives already correct.
       </p>
-      <div class="demo-motif-field" id="demo-motif-field" role="img" aria-label="Поле из всех мотивов набора">
+      <div class="demo-motif-field" id="demo-motif-field" role="img" aria-label="A field of every motif in the set">
         <span class="demo-field-cell" data-src="../doodles/tree.svg"></span>
         <span class="demo-field-cell" data-src="../doodles/sprout.svg"></span>
         <span class="demo-field-cell" data-src="../doodles/flower-tulip.svg"></span>
@@ -1458,7 +1548,7 @@
     </div>
 
     <div class="demo-group">
-      <h3 class="demo-group__name">Опись</h3>
+      <h3 class="demo-group__name">The inventory</h3>
       <div class="demo-motif-grid">
         <div class="demo-motif-item"><span class="demo-motif-item__art" data-src="../doodles/arrow-right.svg" role="img" aria-label="arrow-right"></span><span class="demo-motif-item__name">arrow-right</span></div>
         <div class="demo-motif-item"><span class="demo-motif-item__art" data-src="../doodles/bowl.svg" role="img" aria-label="bowl"></span><span class="demo-motif-item__name">bowl</span></div>
@@ -1486,37 +1576,38 @@
 
   <h2 class="demo-marker">
     <span class="demo-marker__num">10</span>
-    <span class="demo-marker__name">Персонажи</span>
+    <span class="demo-marker__name">Characters</span>
     <span class="demo-marker__note">characters/ · viewBox 0 0 200 200 · stroke 7</span>
   </h2>
 
-  <section class="demo-plate" aria-label="Персонажи">
+  <section class="demo-plate" aria-label="Characters">
     <p class="demo-note">
-      Их двое, и список закрыт. Пельмень ведёт, Батон появляется там, где речь про отдых.
+      There are two of them and the roster is closed. Пельмень leads; Батон turns up
+      wherever the subject is rest.
     </p>
     <div class="demo-character-grid">
       <div class="demo-character-group">
         <p class="demo-character-group__name">Пельмень</p>
         <div class="demo-character-group__images">
-          <span class="demo-character-art" data-src="../characters/pelmen-idle.svg" role="img" aria-label="пельмень, спокоен"></span>
-          <span class="demo-character-art" data-src="../characters/pelmen-cheer.svg" role="img" aria-label="пельмень радуется"></span>
+          <span class="demo-character-art" data-src="../characters/pelmen-idle.svg" role="img" aria-label="Пельмень, at rest"></span>
+          <span class="demo-character-art" data-src="../characters/pelmen-cheer.svg" role="img" aria-label="Пельмень cheering"></span>
         </div>
-        <p class="krk-list-row__meta">главный герой</p>
+        <p class="krk-list-row__meta">the lead</p>
       </div>
       <div class="demo-character-group">
         <p class="demo-character-group__name">Батон</p>
         <div class="demo-character-group__images">
-          <span class="demo-character-art" data-src="../characters/baton-idle.svg" role="img" aria-label="батон, спокоен"></span>
-          <span class="demo-character-art" data-src="../characters/baton-sleep.svg" role="img" aria-label="батон спит"></span>
+          <span class="demo-character-art" data-src="../characters/baton-idle.svg" role="img" aria-label="Батон, at rest"></span>
+          <span class="demo-character-art" data-src="../characters/baton-sleep.svg" role="img" aria-label="Батон asleep"></span>
         </div>
-        <p class="krk-list-row__meta">второй план — сон и отдых</p>
+        <p class="krk-list-row__meta">the second — sleep and rest</p>
       </div>
     </div>
-    <p class="krk-hand" style="margin-top:var(--krk-space-3);">наши</p>
+    <p class="krk-hand" style="margin-top:var(--krk-space-3);">ours</p>
   </section>
 
   <p class="demo-footer">
-    Karakuli v1 · бумага, чернила, каляки · канон — STYLE.md, решения — DECISIONS.md
+    Karakuli v1 · paper, ink, scribbles · canon in STYLE.md, decisions in DECISIONS.md
   </p>
 
   <script>
@@ -1553,6 +1644,39 @@
       // Sync the pressed state to whatever the head-inline restore script
       // already applied to <html> before first paint.
       applyFont(document.documentElement.dataset.font || 'mplus');
+
+      // The theme, on the same pattern and for the same reason: 'system' is
+      // the absence of the attribute, so choosing it removes rather than
+      // sets. web/theme.js is the kit's own version of this and is what a
+      // real app should import; the page repeats it inline so the control
+      // strip keeps working even when the module layer doesn't.
+      var themeButtons = Array.prototype.slice.call(document.querySelectorAll('.demo-theme-btn'));
+
+      function applyTheme(mode) {
+        if (mode === 'light' || mode === 'dark') {
+          document.documentElement.setAttribute('data-theme', mode);
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        themeButtons.forEach(function (btn) {
+          btn.setAttribute('aria-pressed', String(btn.dataset.themeChoice === mode));
+        });
+      }
+
+      themeButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var mode = btn.dataset.themeChoice;
+          try {
+            if (mode === 'system') localStorage.removeItem('krk-theme');
+            else localStorage.setItem('krk-theme', mode);
+          } catch (e) {
+            // Not fatal: the choice just won't survive a reload.
+          }
+          applyTheme(mode);
+        });
+      });
+
+      applyTheme(document.documentElement.getAttribute('data-theme') || 'system');
     })();
   </script>
 
@@ -1739,7 +1863,7 @@
         soundToggle?.addEventListener('click', () => {
           enabled = !enabled;
           krk.setEnabled(enabled);
-          soundToggle.textContent = enabled ? 'вкл' : 'выкл';
+          soundToggle.textContent = enabled ? 'on' : 'off';
           soundToggle.setAttribute('aria-pressed', String(enabled));
         });
       } catch {

@@ -14,6 +14,7 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { contrast } from './contrast.mjs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -136,6 +137,91 @@ if (demoHtml) {
   for (const ref of refs) {
     if (!existsSync(join(ROOT, 'demo', ref))) warn('demo', `demo/index.html references ${ref}, which doesn't exist`);
   }
+}
+
+// ---- 8. Baked colour: a hand-drawn mark carrying its own hex.
+// Six marks in karakuli.css used to write the ink colour inside their data
+// URI, because currentColor cannot reach in there. That made them the only
+// marks in the system that could follow neither an accent nor a theme, and it
+// is what kept dark mode in the backlog for as long as it was. They are masks
+// now, and this check is what stops a seventh from arriving.
+//
+// %23000 (black) is exempt and only black is: a mask source needs *some* paint
+// to carry alpha, mask-mode: alpha reads the alpha and discards the colour, so
+// black there is a carrier rather than a decision.
+for (const file of ['web/karakuli.css', 'web/tokens.css', 'web/anim.css', 'web/boil.css',
+                    'demo/index.html', 'demo/motion.css', 'poster/template.html']) {
+  const text = read(file, 'baked-colour');
+  if (!text) continue;
+  for (const m of text.matchAll(/data:image\/svg\+xml[^"')]*/g)) {
+    const colours = [...m[0].matchAll(/%23[0-9a-fA-F]{3,8}|rgba?\(/g)].map((c) => c[0]);
+    const baked = colours.filter((c) => c.toLowerCase() !== '%23000');
+    if (baked.length) {
+      warn('baked-colour', `${file} bakes ${baked[0]} into a data: URI — a mark that carries its own colour cannot follow a theme. Draw it in %23000 and cut it with mask-image + background-color: currentColor.`);
+      break;
+    }
+  }
+}
+
+// ---- 9. Contrast, in both grounds. Run with --contrast to see the numbers;
+// the failures are reported either way.
+// [ink, surface, minimum, label]. 3.0 marks a pair only ever used at large
+// sizes or as illustration, where AA allows the lower bar.
+// [ink, surface, minimum, label]. The minimum is a number, or a per-ground
+// pair where canon sets a different bar for each — which it does, because the
+// verdicts in STYLE.md §1 were measured on cream and several of them stop
+// being true on indigo.
+const PAIRS = [
+  ['--krk-ink', '--krk-paper', 4.5, 'body text on paper'],
+  ['--krk-ink', '--krk-paper-2', 4.5, 'body text on a card'],
+  ['--krk-ink-soft', '--krk-paper', 4.5, 'meta text on paper'],
+  ['--krk-ink-soft', '--krk-paper-2', 4.5, 'meta text on a card'],
+  // ink-faint is decoration, not text — STYLE.md §1 says "never for text a
+  // user must read". The bar is therefore "can you see it at all", not AA;
+  // holding decoration to a reading bar is how you end up darkening a hairline
+  // until it stops being a hairline.
+  ['--krk-ink-faint', '--krk-paper', 1.5, 'hairlines and dotted grids on paper'],
+  ['--krk-ink-faint', '--krk-paper-2', 1.5, 'hairlines on a card'],
+  ['--krk-danger', '--krk-paper', 4.5, 'danger text on paper'],
+  ['--krk-ink', '--krk-wash-lavender', 4.5, 'text on a lavender card'],
+  ['--krk-ink', '--krk-wash-sage', 4.5, 'text on a sage card'],
+  ['--krk-ink', '--krk-wash-blush', 4.5, 'text on a blush card'],
+  ['--krk-ink', '--krk-wash-butter', 4.5, 'text on a butter card'],
+  ['--krk-ink-soft', '--krk-wash-lavender', 4.5, 'meta text on a lavender card'],
+  ['--krk-ink-soft', '--krk-wash-sage', 4.5, 'meta text on a sage card'],
+  ['--krk-ink-soft', '--krk-wash-blush', 4.5, 'meta text on a blush card'],
+  ['--krk-ink-soft', '--krk-wash-butter', 4.5, 'meta text on a butter card'],
+  // The brights, at the bar canon actually sets for each. Night lifts all four
+  // clear of AA; day does not, and orange is illustration-only there, so its
+  // day bar is only that it remains visible.
+  ['--krk-pen-blue', '--krk-paper', 4.5, 'pen blue as text'],
+  ['--krk-pen-green', '--krk-paper', { light: 3.0, dark: 4.5 }, 'pen green as large text'],
+  ['--krk-pen-pink', '--krk-paper', { light: 3.0, dark: 4.5 }, 'pen pink as large text'],
+  ['--krk-pen-orange', '--krk-paper', { light: 1.5, dark: 4.5 }, 'pen orange — illustration only by day'],
+];
+
+const REPORT = process.argv.includes('--contrast');
+if (tokensCss) {
+  // light-dark(a, b) is the whole point: one declaration, both grounds. Pull
+  // the pair out per token and measure each ground against its own siblings.
+  const grounds = { light: 0, dark: 1 };
+  const pairs = new Map();
+  for (const m of tokensCss.matchAll(/(--krk-[a-z0-9-]+):\s*light-dark\(\s*(#[0-9a-fA-F]{3,6})\s*,\s*(#[0-9a-fA-F]{3,6})\s*\)/g)) {
+    pairs.set(m[1], [m[2], m[3]]);
+  }
+  for (const [ground, i] of Object.entries(grounds)) {
+    if (REPORT) console.log(`\n  ${ground}`);
+    for (const [inkName, bgName, bar, label] of PAIRS) {
+      const min = typeof bar === 'number' ? bar : bar[ground];
+      const ink = pairs.get(inkName)?.[i];
+      const bg = pairs.get(bgName)?.[i];
+      if (!ink || !bg) { warn('contrast', `${ground}: could not resolve ${inkName} / ${bgName} as a light-dark() pair`); continue; }
+      const r = contrast(ink, bg);
+      if (REPORT) console.log(`    ${r >= min ? 'ok  ' : 'FAIL'} ${r.toFixed(2).padStart(6)}:1 (min ${min})  ${label}`);
+      if (r < min) warn('contrast', `${ground}: ${label} — ${inkName} ${ink} on ${bgName} ${bg} is ${r.toFixed(2)}:1, under ${min}:1`);
+    }
+  }
+  if (REPORT) console.log('');
 }
 
 // ---- Report ----

@@ -7,28 +7,40 @@
  */
 
 :root {
-  /* Paper & ink — warm, never neutral, never pure black/white */
-  --krk-paper: #F7F3E9;
-  --krk-paper-2: #EFE9DA;
-  --krk-ink: #26241F;
-  --krk-ink-soft: #6B665C;
-  --krk-ink-faint: #A9A294;
+  /* Two grounds, declared once each. The second value of every pair is the
+     night palette (STYLE.md §1); light-dark() picks between them off
+     color-scheme, so there is no second block of hexes to keep in step —
+     the pairing IS the declaration. An app that overrides a token with
+     another token, e.g. --krk-accent: var(--krk-pen-blue), gets both halves
+     for free; one that overrides with a raw hex owns its own night. */
+  color-scheme: light dark;
 
-  /* Pen brights — illustrations and large accents ONLY, never small body text */
-  --krk-pen-blue: #2F3AC7;
-  --krk-pen-green: #2E7D46;
-  --krk-pen-orange: #E07A1F;
-  --krk-pen-pink: #D9569B;
+  /* Paper & ink — warm by day, never neutral, never pure black/white */
+  --krk-paper: light-dark(#F7F3E9, #1A1B33);
+  --krk-paper-2: light-dark(#EFE9DA, #262845);
+  --krk-ink: light-dark(#26241F, #F2ECE0);
+  --krk-ink-soft: light-dark(#6B665C, #A6AAC4);
+  --krk-ink-faint: light-dark(#A9A294, #8C92B8);
 
-  /* Washes — card/widget backgrounds, diluted pen brights */
-  --krk-wash-lavender: #E6E3F4;
-  --krk-wash-sage: #E2EAD9;
-  --krk-wash-blush: #F6E0E2;
-  --krk-wash-butter: #F6ECC9;
+  /* Pen brights — illustrations and large accents ONLY, never small body
+     text. The night values are lifted, not inverted: #2F3AC7 is already a
+     dark blue, and on a dark ground a dark bright is not a bright. */
+  --krk-pen-blue: light-dark(#2F3AC7, #8E96EE);
+  --krk-pen-green: light-dark(#2E7D46, #6FBF97);
+  --krk-pen-orange: light-dark(#E07A1F, #E8A24A);
+  --krk-pen-pink: light-dark(#D9569B, #E68CC0);
+
+  /* Washes — card/widget backgrounds, diluted pen brights. Diluted toward
+     whichever ground they sit on, so each keeps its temperature against its
+     siblings in either theme. */
+  --krk-wash-lavender: light-dark(#E6E3F4, #2C2E52);
+  --krk-wash-sage: light-dark(#E2EAD9, #22333A);
+  --krk-wash-blush: light-dark(#F6E0E2, #3A2A4A);
+  --krk-wash-butter: light-dark(#F6ECC9, #35331F);
 
   /* Semantic */
-  --krk-accent: var(--krk-ink); /* apps may override with one pen bright or a signature colour */
-  --krk-danger: #B3402F;
+  --krk-accent: var(--krk-ink);  /* apps may override with one pen bright or a signature colour */
+  --krk-danger: light-dark(#B3402F, #E0705C);
 
   /* Type — M PLUS Rounded 1c is the UI/body face (rounded terminals read
      softer next to the hand-drawn pen); Onest kept as fallback only */
@@ -74,6 +86,12 @@
      overshoot has nothing to overshoot into. */
   --krk-motion-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+/* An explicit choice beats the operating system. Absent, the OS decides.
+   web/theme.js owns the attribute; nothing else needs to know which theme
+   is live, because every colour above already carries both of its values. */
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
 
 /* Base layer — page ground and the two defaults every screen inherits */
 

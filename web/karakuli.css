@@ -4,13 +4,62 @@
  * Naive, cosy, hand-drawn "paper + ink + colour moments" style.
  * Assumes web/tokens.css is loaded first; every value below reaches for
  * a --krk-* token except the deliberately hand-touched bits: organic
- * per-corner border-radius pairs and a few embedded hand-drawn SVG
- * marks. Both are varied per component on purpose — repeating the same
+ * per-corner border-radius pairs and the embedded hand-drawn SVG marks
+ * below. Both are varied per component on purpose — repeating the same
  * numbers everywhere is what makes hand-drawn UI read as fake.
  *
  * No box-shadows anywhere (see rule below): separation comes from wash
  * backgrounds and 1.5px ink hairlines instead.
  */
+
+/* ============================================================
+   The pen marks — .krk-* drawings carried in CSS
+   ------------------------------------------------------------
+   Six places in this file draw with the pen rather than with a
+   border: the check, the radio, the tab underline, the divider, the
+   list separator (the divider's own stroke, reused) and the inline
+   arrow. They used to be background images with the ink hex written
+   into the markup, because currentColor cannot reach inside a data
+   URI — which meant they were the only marks in the system that
+   could follow neither an accent nor a theme, and on a dark ground
+   they rendered dark on dark and vanished.
+
+   They are stencils now. The drawing carries shape only; the colour
+   is `background-color: currentColor` on the element the mask is cut
+   from. The `%23000` stroke inside each URI is an alpha carrier and
+   nothing else — `mask-mode: alpha` reads the alpha channel and
+   throws the colour away — which is why tools/check-sync.mjs exempts
+   exactly that one value from the baked-colour check and no other.
+
+   Consequence worth knowing before you use one: a mask clips the
+   whole element it is set on, borders and outlines included. A mark
+   therefore rides on an element that is nothing but the mark — a
+   pseudo-element, or a bare <hr>. Never put one on a box that also
+   has to show an edge.
+   ============================================================ */
+
+:root {
+  /* check — same stroke as doodles/check.svg (0 0 48 48, stroke 2.8) */
+  --krk-mark-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M8,20 C7,22 9,24 10,24 C14,28 18,32 20,34 C26,26 34,14 40,8' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M24,30 C27,26 31,20 34,15' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  /* radio — no ready doodle for a "scribbled-in dot", drawn fresh on the
+     same 48x48 / stroke-2.8 canvas so it reads as the same hand */
+  --krk-mark-radio: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24,33 C18,32 15,27 18,22 C21,17 27,15 31,20 C35,25 34,30 28,33 C23,35 19,32 20,28 C21,25 25,24 27,26 C29,28 28,30 25,30' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  /* tab underline — two overlapping passes, like a quick pen stroke. The
+     0.9 / 0.6 opacities are the second pass sitting lighter than the
+     first; under mask-mode: alpha they survive as mask alpha, so the
+     fade is still a fade and not two solid lines. */
+  --krk-mark-tab: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 16'%3E%3Cpath d='M2,7 C15,3 30,10 45,6 C60,2 75,9 90,5 C100,3 108,7 117,4' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' opacity='0.9'/%3E%3Cpath d='M4,10 C18,13 33,7 48,11 C63,14 78,8 93,12 C103,14 110,10 116,11' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' opacity='0.6'/%3E%3C/svg%3E");
+
+  /* the wobbly rule — one drawing, used by both .krk-divider and the
+     list-row separator, which is why it is a token and not written twice */
+  --krk-mark-rule: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'%3E%3Cpath d='M0,4 C12,2.5 25,5.5 37,4 C50,2.5 62,5.5 75,4 C87,2.5 100,5.5 112,4 C125,2.5 137,5.5 150,4 C162,2.5 175,5.5 187,4 C195,3 200,4.5 200,4' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  /* arrow — same stroke as doodles/arrow-right.svg, so every arrow in the
+     system is the one pen */
+  --krk-mark-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M6,27 C16,23 29,22 38,24' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M32,16 C36,19 40,22 43,25' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M43,25 C39,28 35,30 31,33' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
 
 /* ============================================================
    0. Global interaction states
@@ -78,7 +127,11 @@
 }
 
 .krk-btn--primary:hover {
-  background: #3a372f; /* one step lighter than ink — see contract, not a token */
+  /* One step of the ground mixed into the accent. Written as a mix rather
+     than as the hex it used to be (#3a372f) because "one step lighter than
+     ink" only holds while the ink is dark: on a night ground the fill is
+     chalk and the hover has to go darker, which this does by itself. */
+  background: color-mix(in srgb, var(--krk-accent) 91%, var(--krk-paper));
 }
 
 .krk-btn--outline {
@@ -189,9 +242,10 @@
 
 /* ============================================================
    4. Checkbox / radio — .krk-check, .krk-radio, .krk-choice
-   Custom appearance:none controls; the checked marks are hand-drawn
-   strokes baked in as data URIs (ink colour only, per the micro-asset
-   method — no fills, cubic beziers, gentle wobble, round caps).
+   Custom appearance:none controls. The checked mark rides on a
+   pseudo-element rather than on the control's own background, because a
+   mask clips the element it is set on — put it on the input and the
+   box loses the very edge that makes it a box.
    ============================================================ */
 
 .krk-check,
@@ -202,11 +256,9 @@
   width: 22px;
   height: 22px;
   margin: 0;
+  position: relative;
   border: var(--krk-stroke-ui) solid var(--krk-ink);
   background-color: var(--krk-paper);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 68%;
   cursor: pointer;
   transition: background-color var(--krk-motion-fast) var(--krk-motion-ease), border-color var(--krk-motion-fast) var(--krk-motion-ease);
 }
@@ -220,17 +272,31 @@
   border-radius: 48% 52% 50% 50% / 55% 45% 52% 48%;
 }
 
-.krk-check:checked {
-  /* same stroke as doodles/check.svg (viewBox 0 0 48 48, stroke-width 2.8) —
-     reused rather than redrawn, ink baked in since currentColor can't reach
-     into a data URI */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M8,20 C7,22 9,24 10,24 C14,28 18,32 20,34 C26,26 34,14 40,8' fill='none' stroke='%2326241F' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M24,30 C27,26 31,20 34,15' fill='none' stroke='%2326241F' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+/* inset: 0 is the padding box, which is the same area background-size used
+   to measure against — so 68% is the mark at exactly its old size. */
+.krk-check:checked::after,
+.krk-radio:checked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: 68%;
+          mask-size: 68%;
+  mask-mode: alpha;
 }
 
-.krk-radio:checked {
-  /* no ready doodle for a "scribbled-in dot" — drawn fresh, but on the same
-     48x48/stroke-2.8 canvas convention as check.svg so it reads as the same hand */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24,33 C18,32 15,27 18,22 C21,17 27,15 31,20 C35,25 34,30 28,33 C23,35 19,32 20,28 C21,25 25,24 27,26 C29,28 28,30 25,30' fill='none' stroke='%2326241F' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+.krk-check:checked::after {
+  -webkit-mask-image: var(--krk-mark-check);
+          mask-image: var(--krk-mark-check);
+}
+
+.krk-radio:checked::after {
+  -webkit-mask-image: var(--krk-mark-radio);
+          mask-image: var(--krk-mark-radio);
 }
 
 .krk-choice {
@@ -264,8 +330,7 @@
   color: var(--krk-ink-soft);
   padding: var(--krk-space-2) var(--krk-space-4) 12px;
   cursor: pointer;
-  background-repeat: no-repeat;
-  background-position: center bottom 3px;
+  position: relative;
   transition: color var(--krk-motion-fast) var(--krk-motion-ease);
 }
 
@@ -275,9 +340,26 @@
 
 .krk-tab.is-active {
   color: var(--krk-ink);
-  /* two overlapping wobbly passes, like a quick pen underline */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 16'%3E%3Cpath d='M2,7 C15,3 30,10 45,6 C60,2 75,9 90,5 C100,3 108,7 117,4' fill='none' stroke='%2326241F' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' opacity='0.9'/%3E%3Cpath d='M4,10 C18,13 33,7 48,11 C63,14 78,8 93,12 C103,14 110,10 116,11' fill='none' stroke='%2326241F' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' opacity='0.6'/%3E%3C/svg%3E");
-  background-size: 56px 10px;
+}
+
+/* The underline is drawn under the label, not behind it, so the mask that
+   cuts it never touches the text. */
+.krk-tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 56px;
+  height: 10px;
+  transform: translateX(-50%);
+  background-color: currentColor;
+  -webkit-mask-image: var(--krk-mark-tab);
+          mask-image: var(--krk-mark-tab);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+  mask-mode: alpha;
 }
 
 /* ============================================================
@@ -288,9 +370,14 @@
   border: none;
   height: 8px;
   margin: var(--krk-space-5) 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'%3E%3Cpath d='M0,4 C12,2.5 25,5.5 37,4 C50,2.5 62,5.5 75,4 C87,2.5 100,5.5 112,4 C125,2.5 137,5.5 150,4 C162,2.5 175,5.5 187,4 C195,3 200,4.5 200,4' fill='none' stroke='%2326241F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-size: 200px 8px;
+  background-color: currentColor;
+  -webkit-mask-image: var(--krk-mark-rule);
+          mask-image: var(--krk-mark-rule);
+  -webkit-mask-repeat: repeat-x;
+          mask-repeat: repeat-x;
+  -webkit-mask-size: 200px 8px;
+          mask-size: 200px 8px;
+  mask-mode: alpha;
   opacity: 0.5;
 }
 
@@ -325,13 +412,18 @@
   bottom: 0;
   height: 6px;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'%3E%3Cpath d='M0,4 C12,2.5 25,5.5 37,4 C50,2.5 62,5.5 75,4 C87,2.5 100,5.5 112,4 C125,2.5 137,5.5 150,4 C162,2.5 175,5.5 187,4 C195,3 200,4.5 200,4' fill='none' stroke='%2326241F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
+  background-color: currentColor;
+  -webkit-mask-image: var(--krk-mark-rule);
+          mask-image: var(--krk-mark-rule);
+  -webkit-mask-repeat: repeat-x;
+          mask-repeat: repeat-x;
   /* The tile has to keep the drawing's own 200x8 proportions. At any other
      ratio the SVG scales to *meet* inside the tile and is letterboxed, which
      on a repeating background puts a visible gap at every seam — the one way
      a hand-drawn rule can end up looking machine-cut. 150x6 is 200x8 at 0.75. */
-  background-size: 150px 6px;
+  -webkit-mask-size: 150px 6px;
+          mask-size: 150px 6px;
+  mask-mode: alpha;
   opacity: 0.35;
 }
 
@@ -466,13 +558,18 @@
   height: 0.6em;
   margin-left: 0.4em;
   vertical-align: middle;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  /* same stroke as doodles/arrow-right.svg (viewBox 0 0 48 48, stroke-width 2.8) —
-     reused rather than redrawn so every arrow in the system is the same pen stroke;
-     currentColor isn't usable in a data URI, so the ink token is baked in as a hex */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M6,27 C16,23 29,22 38,24' fill='none' stroke='%2326241F' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M32,16 C36,19 40,22 43,25' fill='none' stroke='%2326241F' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M43,25 C39,28 35,30 31,33' fill='none' stroke='%2326241F' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  /* currentColor, so the arrow is finally legible on an accent-filled
+     button — it used to draw ink on ink there and disappear. */
+  background-color: currentColor;
+  -webkit-mask-image: var(--krk-mark-arrow);
+          mask-image: var(--krk-mark-arrow);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  mask-mode: alpha;
 }
 
 /* ============================================================

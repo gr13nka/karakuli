@@ -58,16 +58,16 @@ function findBrowser() {
    has no other use for. `from`/`to` clip the union of two elements, and
    'sel@n' picks the nth match. */
 const SHOTS = [
-  // The README's opening pair. Article shows its two themes side by side;
-  // Karakuli has one, so the pair shows the doctrine instead: the same system
-  // at rest, and the same system spending its colour.
-  { file: 'quiet.png',   w: 1440, clip: '.demo-phone@0' },
-  { file: 'moment.png',  w: 1440, clip: '.demo-phone@2' },
-  { file: 'phones.png',  w: 1440, clip: '.demo-phones' },
+  // Every shot here is embedded in the README. A picture that is regenerated
+  // on every design change but shown nowhere is drift with a head start.
+  { file: 'phones.png',     w: 1440, clip: '.demo-phones', pad: 28 },
   // The gallery runs several thousand pixels, so it is sampled rather than
-  // captured whole: buttons, cards and fields carry it.
-  { file: 'gallery.png', w: 1440, from: '#gallery .demo-group@0', to: '#gallery .demo-group@2', max: 1500 },
-  { file: 'motifs.png',  w: 1440, clip: '#demo-motif-field' },
+  // captured whole: buttons, cards and fields carry it. Shot at a narrower
+  // viewport than the others on purpose — a specimen row left-packed across
+  // 1232px is mostly the paper to its right, and the crop keeps that emptiness
+  // where the page itself just goes on to the next thing.
+  { file: 'components.png', w: 980, from: '#gallery .demo-group@0', to: '#gallery .demo-group@2', pad: 20 },
+  { file: 'motifs.png',     w: 980, clip: '#demo-motif-field', pad: 12 },
 ];
 
 /* The demo's own furniture — the sticky control strip and the numbered plate
@@ -78,7 +78,9 @@ const SHOTS = [
    reason a photograph is not a film: a shot fired mid-sprout is a picture of a
    half-drawn motif, and it looks like a rendering fault rather than motion. */
 const HIDE_CHROME = `
-  .demo-controls, .demo-marker { display: none !important; }
+  /* .demo-note is the page explaining a plate to its reader; in a crop it
+     arrives as a severed line of grey text above the specimen. */
+  .demo-controls, .demo-marker, .demo-note { display: none !important; }
   html { scroll-behavior: auto !important; }
   .krk-enter-sprout, .krk-enter-rise, .krk-enter-draw, .krk-bloom {
     animation: none !important;
@@ -188,11 +190,19 @@ async function main() {
     await send(ws, 'Page.navigate', { url: `http://127.0.0.1:${PORT}/demo/index.html` }, sessionId);
     await waitUntil(ws, sessionId, `document.readyState === 'complete'`, 'the page to load');
 
-    // The demo persists the font choice in localStorage; force the canonical
-    // face explicitly so a shot never inherits whatever was last auditioned.
+    // The demo persists the font choice and the theme in localStorage; force
+    // the canonical face and the light ground explicitly so a shot never
+    // inherits whatever was last auditioned.
+    //
+    // The theme half is not paranoia: since tokens.css started declaring its
+    // colours with light-dark(), the page follows prefers-color-scheme, and a
+    // headless browser resolves that to dark. Without this line the README's
+    // screenshots quietly come back at night.
     await send(ws, 'Runtime.evaluate', { expression: `
       try { localStorage.removeItem('krk-demo-font'); } catch (e) {}
+      try { localStorage.removeItem('krk-theme'); } catch (e) {}
       delete document.documentElement.dataset.font;
+      document.documentElement.setAttribute('data-theme', 'light');
     ` }, sessionId);
 
     // The page fetches every drawing it shows, so "loaded" is not "ready":
@@ -217,10 +227,16 @@ async function main() {
         const b = ${shot.to ? `q(${JSON.stringify(shot.to)})` : 'a'};
         if (!a || !b) return null;
         const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
-        const top = Math.min(ra.top, rb.top) + scrollY;
-        const bottom = Math.max(ra.bottom, rb.bottom) + scrollY;
-        const left = Math.min(ra.left, rb.left);
-        const right = Math.max(ra.right, rb.right);
+        // A bounding box ends *on* the element's border, and every surface in
+        // this kit is drawn as a 1.5px stroke — so an exact clip shears the
+        // frame off and the phone comes back looking broken. The margin is
+        // paper, which is also the ground the shot is going to sit on.
+        const pad = ${shot.pad ?? 0};
+        const sheet = document.documentElement.scrollWidth;
+        const top = Math.max(0, Math.min(ra.top, rb.top) + scrollY - pad);
+        const bottom = Math.max(ra.bottom, rb.bottom) + scrollY + pad;
+        const left = Math.max(0, Math.min(ra.left, rb.left) - pad);
+        const right = Math.min(sheet, Math.max(ra.right, rb.right) + pad);
         return JSON.stringify({ x: left, y: top, width: right - left, height: bottom - top });
       })()
     `, returnByValue: true }, sessionId);

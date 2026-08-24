@@ -14,7 +14,9 @@ If a screen looks tempting to decorate, the right move is usually to add less co
 
 ## 1. Palette
 
-Every colour in Karakuli is warm — there is no neutral gray anywhere in the system, and there is no pure black or pure white.
+There is no neutral gray anywhere in the system, and no pure black or pure white. By day every colour is warm; at night the ground turns to a cool indigo and the ink to chalk, which is the one place the system is deliberately not warm — see **Dark mode** below for what that buys and what it costs.
+
+The hexes in the three tables that follow are the **day** values. Every one of them has a night counterpart, and both live in one `light-dark()` declaration per token in `web/tokens.css`.
 
 ### Paper & ink
 
@@ -30,12 +32,14 @@ Every colour in Karakuli is warm — there is no neutral gray anywhere in the sy
 
 These are the colours the pen can pick up. They belong to doodles, icons, and large celebratory text — **never** to small body copy, and never to more than one at a time inside ordinary UI chrome.
 
-| Token | Hex | Role | Text usage (on `--krk-paper`) |
-|---|---|---|---|
-| `--krk-pen-blue` | `#2F3AC7` | Cool, dependable accent | Passes WCAG AA at any text size. The one pen bright safe enough to use for small labels or links. |
-| `--krk-pen-green` | `#2E7D46` | Growth, gardens, "done" | Large text only (18px+ / bold 14px+). Too close to the AA line at small sizes — treat as illustration/heading colour. |
-| `--krk-pen-orange` | `#E07A1F` | Warmth, energy, warning-adjacent | Illustration only. Never set as text colour on paper — it fails AA even at large sizes. |
-| `--krk-pen-pink` | `#D9569B` | Delight, celebration | Large text only (18px+ / bold 14px+), same reasoning as green. |
+| Token | Hex (day) | Role | Text usage on day paper | Text usage on night paper |
+|---|---|---|---|---|
+| `--krk-pen-blue` | `#2F3AC7` | Cool, dependable accent | Passes WCAG AA at any text size (7.43:1). The one pen bright safe enough for small labels or links. | AA at any size (6.21:1). |
+| `--krk-pen-green` | `#2E7D46` | Growth, gardens, "done" | Large text only (18px+ / bold 14px+). Sits at 4.58:1 — too close to the line to trust at small sizes. | AA at any size (7.67:1). |
+| `--krk-pen-orange` | `#E07A1F` | Warmth, energy, warning-adjacent | Illustration only. 2.72:1 — fails AA even at large sizes. | AA at any size (7.77:1). |
+| `--krk-pen-pink` | `#D9569B` | Delight, celebration | Large text only (18px+ / bold 14px+), 3.29:1, same reasoning as green. | AA at any size (7.11:1). |
+
+The night column is wider than the day one — on indigo all four clear AA outright. **This does not license using them as text there.** The restriction above is §5's doctrine, which rations colour so that spending it means something; the contrast numbers were only ever the floor under that decision, never the reason for it. A bright is still illustration and large accents, on either ground.
 
 ### Washes — card and widget backgrounds
 
@@ -56,6 +60,42 @@ Washes are backgrounds, not text colours, and they are never paired with the pen
 |---|---|---|
 | `--krk-accent` | `var(--krk-ink)` by default | The app's one signature colour. May be overridden per app with a single pen bright, or a bespoke signature colour that still passes the AA rules above. Never more than one accent per app. |
 | `--krk-danger` | `#B3402F` | Errors, destructive actions, irreversible warnings. The one colour allowed to appear without being "earned" — safety communication is not a colour moment. |
+
+### Dark mode
+
+Karakuli ships two grounds. Every colour token above carries both, declared once as a
+`light-dark()` pair, so a token name means the same thing under either.
+
+| Token | Day | Night |
+|---|---|---|
+| `--krk-paper` | `#F7F3E9` | `#1A1B33` |
+| `--krk-paper-2` | `#EFE9DA` | `#262845` |
+| `--krk-ink` | `#26241F` | `#F2ECE0` |
+| `--krk-ink-soft` | `#6B665C` | `#A6AAC4` |
+| `--krk-ink-faint` | `#A9A294` | `#8C92B8` |
+| `--krk-pen-blue` | `#2F3AC7` | `#8E96EE` |
+| `--krk-pen-green` | `#2E7D46` | `#6FBF97` |
+| `--krk-pen-orange` | `#E07A1F` | `#E8A24A` |
+| `--krk-pen-pink` | `#D9569B` | `#E68CC0` |
+| `--krk-wash-lavender` | `#E6E3F4` | `#2C2E52` |
+| `--krk-wash-sage` | `#E2EAD9` | `#22333A` |
+| `--krk-wash-blush` | `#F6E0E2` | `#3A2A4A` |
+| `--krk-wash-butter` | `#F6ECC9` | `#35331F` |
+| `--krk-danger` | `#B3402F` | `#E0705C` |
+
+Four rules hold the night palette together, and each exists because the obvious alternative was tried and looked wrong:
+
+**The brights lift; they do not invert.** `#2F3AC7` is already a dark blue. Inverting it gives a pale wash; dimming it gives mud. Both stop reading as *a pen picking up a colour*, which is what a bright is for. Every night bright is the day one raised until it reads as a bright against indigo again.
+
+**The washes dilute toward their own ground.** A wash is a bright diluted almost to nothing — "almost to nothing" means almost to the paper it lies on, so at night it dilutes toward indigo rather than toward cream. Each night wash makes a slightly larger step against its ground than its day counterpart does, which matters here more than elsewhere: this system has no shadows, so the step between two surfaces is the only thing separating them.
+
+**Distance is a hue shift, never chalk at low opacity.** Dropping the ink's opacity to push something back gives a muddy grey that reads as dirt on the page rather than as air in front of the thing. Anything that needs to sit back moves toward the ground's own hue instead.
+
+**The accent is not a knob that changed.** `--krk-accent` still defaults to `var(--krk-ink)`, so it follows the ground by itself. An app that sets its accent to a pen bright gets the lifted value at night for free. An app that sets a raw hex owns its own night and must say what it is. Dark is a ground the system ships, not a fourth per-app knob — §8's budget is unchanged.
+
+Selection is one attribute on `<html>`: absent follows the operating system, `data-theme="light"` and `data-theme="dark"` force one. `web/theme.js` owns it. Its `NO_FLASH_SNIPPET` must be inlined in `<head>` before any stylesheet, because a module import resolves after first paint and the flash has already happened by then.
+
+The **poster arm stays light only**, deliberately rather than by omission: `poster/template.html` is print, and paper is paper.
 
 ---
 
@@ -166,6 +206,7 @@ Implementation: `web/karakuli.css` plus `web/pillnav.js` (`initKarakuliPillnav()
 - Never pure `#000000` or pure `#FFFFFF` anywhere in the system.
 - No box-shadows, with exactly one exception: a single soft shadow is permitted on modals, to lift them off the page.
 - Every interactive element keeps a visible focus state: `outline: 2px solid var(--krk-accent); outline-offset: 2px;`. This is not optional and not replaced by a colour change alone.
+- **No colour inside a data URI.** A hand-drawn mark carried in CSS is a stencil: draw it in `%23000`, cut it with `mask-image`, and colour it with `background-color: currentColor`. `currentColor` cannot reach inside a data URI, so a mark that carries its own hex can follow neither an accent nor a ground — which is exactly what kept dark mode in the backlog for as long as it was. `tools/check-sync.mjs` fails on any other colour in a data URI. One consequence to design around: a mask clips the whole element it is set on, borders and outlines included, so a mark rides on an element that is nothing but the mark — a pseudo-element, or a bare `<hr>`.
 
 ### Spacing & radius
 
@@ -349,9 +390,8 @@ Derive both placements from the one ground line rather than positioning each by 
 
 ## 11. Future (unspecified yet)
 
-Two directions are anticipated but not yet specified in this document, and should not be improvised ahead of a real design pass:
+One direction is anticipated but not yet specified in this document, and should not be improvised ahead of a real design pass:
 
-- **Dark mode.** The working hypothesis is a deep warm-gray paper with a chalk-coloured ink, keeping the same "paper + ink + colour moments" structure rather than inverting to a cold black theme. Token names and structure should carry over; the actual values need their own pass.
 - **Love2D mapping.** Karakuli's web tokens (colour, spacing, type scale) are expected to eventually get a Lua-side equivalent for use in Love2D projects. That mapping — including how the boil filter concept translates to a non-CSS rendering context — is deliberately out of scope here.
 
 Nothing in this section should be treated as settled; it's a placeholder for work that hasn't happened yet.

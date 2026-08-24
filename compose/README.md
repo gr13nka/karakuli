@@ -24,17 +24,20 @@ Both M PLUS Rounded 1c and Shantell Sans are on Google Fonts and support Cyrilli
 spark, heart, pot, cup, bowl, spoon, candle, zzz, leaf, squiggle, arrow, check, cloud).
 Import each via Android Studio's **File → New → Vector Asset → Local file (SVG)** —
 this preserves `stroke`/`stroke-width` as vector path attributes instead of flattening
-to a raster. Give the resulting `ImageVector` a `tint = KarakuliColors.Ink` (or the
-app's accent) at call sites rather than baking colour into the drawable, so the same
-asset works across washes. Never substitute an emoji for a doodle.
+to a raster. Give the resulting `ImageVector` a `tint = LocalKarakuliColors.current.ink`
+(or the app's accent) at call sites rather than baking colour into the drawable, so the
+same asset works across washes — and across both grounds. Never substitute an emoji for
+a doodle.
 
 ## No-shadow rule
 
 Karakuli has no elevation. Every `Card`/`Surface` must set
 `elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)` explicitly — the
 Material3 default is non-zero. Separation between surfaces comes from wash colour and
-a 1.5dp ink hairline border (`BorderStroke(1.5.dp, KarakuliColors.Ink)`), never a
-shadow. The one exception is dialogs, which may carry a single soft shadow.
+a 1.5dp ink hairline border (`BorderStroke(1.5.dp, LocalKarakuliColors.current.ink)`),
+never a shadow. The one exception is dialogs, which may carry a single soft shadow.
+This is why nothing had to change here for the night ground: contrast between surfaces
+was always doing the separating, and it does it under either one.
 
 Hand-drawn touches are reserved for exactly five things: the wobbly divider,
 hand-drawn check/radio marks, a scribble underline on the active tab, hand-drawn
@@ -72,14 +75,31 @@ of truth across platforms. Same doctrine as web: `zen` pack only, volume 0.35, p
 only on meaningful state changes (never on scroll/hover-equivalents or every tap), and
 expose a sound on/off toggle in settings.
 
+## Light and dark
+
+`KarakuliTheme` follows the system by default; pass `darkTheme = …` to force a ground.
+Read colours from `LocalKarakuliColors.current`, never from a top-level constant — a
+constant resolves at compile time and is therefore always the day palette, whatever
+ground the screen is actually being drawn on.
+
+```kotlin
+KarakuliTheme {                                   // or KarakuliTheme(darkTheme = false)
+    val colors = LocalKarakuliColors.current
+    Surface(color = colors.paper) { /* … */ }
+}
+```
+
+`accent` is nullable and defaults to the ground's own ink. Pass a raw `Color` and you own
+it in both grounds; pass one of the set's brights and it is already lifted for night.
+
 ## Per-app knobs
 
 Exactly three things vary per app; nothing else:
 
 1. **Accent colour** — `KarakuliTheme(accent = …)`. Defaults to ink; one pen bright
    or a signature colour is allowed for a louder experiment.
-2. **Wash choice** — pick 1–2 of `WashLavender` / `WashSage` / `WashBlush` /
-   `WashButter` as the app's default card backgrounds (wire into `surfaceVariant`).
+2. **Wash choice** — pick 1–2 of `washLavender` / `washSage` / `washBlush` /
+   `washButter` as the app's default card backgrounds (wire into `surfaceVariant`).
 3. **Energy dial** — calm (sparse doodles, generous spacing) or playful (dotted-grid
    backgrounds, motif sprinkles). Not encoded in this file; it's a layout-level choice
    each screen makes using the tokens above.

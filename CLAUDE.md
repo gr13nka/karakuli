@@ -36,18 +36,23 @@ soft round-nib pen, colour reserved for earned moments (rewards, onboarding, cel
 | `web/anim.css` + `web/anim.js` | Entrance-animation layer (`.krk-enter-*`, `krkStagger`) | Chosen by eye against a live sampler |
 | `web/boil.css` + `web/boil.js` | Living-doodle "boil" (3-frame filter swap, ~6fps) | boil.js self-injects filters on DOMContentLoaded |
 | `web/sound.js` | Sound layer wrapper over uisfx (`KRK_CUES`, `initKarakuliSound`) | zen pack always, volume 0.35; `'click'` is NOT a valid cue |
+| `web/theme.js` | Light/dark control (`initKarakuliTheme`, `NO_FLASH_SNIPPET`) | One `data-theme` attribute; absent follows the OS |
 | `doodles/` | 20 motif SVGs | Contract: viewBox 0 0 48 48, stroke 2.8, `currentColor`, stroke-only, baked wobble |
 | `characters/` | Mascots: Пельмень (primary), Батон (secondary) | viewBox 0 0 200 200, stroke 7; roster closed at two |
-| `compose/` | Android Jetpack Compose mapping (`Karakuli.kt`) | Light theme only for now |
+| `compose/` | Android Jetpack Compose mapping (`Karakuli.kt`) | Both grounds; colours come from `LocalKarakuliColors`, never a constant |
 | `poster/` | Print/poster arm (`POSTER.md`, `template.html`) | Its own louder energy; not the UI default |
-| `demo/index.html` | Russian showcase: 3 phone screens, sound board, font switcher, Витрина | Serve over http, never file:// |
+| `demo/index.html` | The showcase: 3 phone screens, sound board, font and theme switchers, component gallery | English; serve over http, never file:// |
 | `demo/motion.html/.css/.js` | Motion sampler — the by-eye chooser that picked the entrance canon | Draft/witness page, not canon itself |
-| `tools/check-sync.mjs` | Drift checker (`node tools/check-sync.mjs`) | Run before every commit; exit 1 on drift |
+| `tools/check-sync.mjs` | Drift checker (`node tools/check-sync.mjs`, `--contrast` for the numbers) | Run before every commit; exit 1 on drift |
+| `tools/contrast.mjs` | WCAG colour maths, copied from the `article` sibling | A copy on purpose, never a second implementation |
 
 ## How to work here
 
-- **Language split:** canon/docs/schema files are English; demo pages and all in-app UI
-  text are Russian. Both typefaces ship full Cyrillic.
+- **Language:** everything in this repo is English, the showcase included — it is the
+  thing strangers are pointed at, and the README's pictures are taken from it. The two
+  mascots keep their names, Пельмень and Батон, because a name is a name. In-app UI text
+  in an app *built with* Karakuli is whatever that app speaks; both typefaces ship full
+  Cyrillic, so Russian is a first-class case rather than a fallback.
 - **Serving demos:** `python3 -m http.server 8765` from the repo root, then open
   `http://127.0.0.1:8765/demo/…`. `file://` breaks ES modules — never use it. Show visual
   results to the user in Orca's embedded browser (`orca tab create --url …`).

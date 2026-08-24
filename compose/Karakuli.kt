@@ -21,8 +21,13 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,31 +63,87 @@ import kotlin.random.Random
 // Colour
 // ---------------------------------------------------------------------------------------
 
-object KarakuliColors {
-    val Paper = Color(0xFFF7F3E9)
-    val Paper2 = Color(0xFFEFE9DA)
-    val Ink = Color(0xFF26241F)
-    val InkSoft = Color(0xFF6B665C)
-    val InkFaint = Color(0xFFA9A294)
+/**
+ * One palette, held by value rather than by name.
+ *
+ * This used to be an `object` of constants, which made every `KarakuliColors.Ink` at a call
+ * site a compile-time reference to the *light* ink. A second object would not have fixed
+ * that — it would only have made the leak two-valued. Reading colours out of
+ * [LocalKarakuliColors] instead is what lets one composable render correctly under either
+ * ground, which is the whole point of having two.
+ */
+@Immutable
+data class KarakuliColorSet(
+    val paper: Color,
+    val paper2: Color,
+    val ink: Color,
+    val inkSoft: Color,
+    val inkFaint: Color,
 
     // Pen brights — reserved for illustration and large accents (e.g. an icon, a big CTA).
     // Never use these for body text or small UI chrome; they're too saturated at small sizes.
-    val PenBlue = Color(0xFF2F3AC7)
-    val PenGreen = Color(0xFF2E7D46)
-    val PenOrange = Color(0xFFE07A1F)
-    val PenPink = Color(0xFFD9569B)
+    val penBlue: Color,
+    val penGreen: Color,
+    val penOrange: Color,
+    val penPink: Color,
 
     // Washes — flat, low-saturation tints that stand in for elevation. Pick one per app as
     // the default tinted-surface colour (see README "per-app knobs: wash choice").
-    val WashLavender = Color(0xFFE6E3F4)
-    val WashSage = Color(0xFFE2EAD9)
-    val WashBlush = Color(0xFFF6E0E2)
-    val WashButter = Color(0xFFF6ECC9)
+    val washLavender: Color,
+    val washSage: Color,
+    val washBlush: Color,
+    val washButter: Color,
 
-    // Accent defaults to Ink; each app overrides via KarakuliTheme(accent = …).
-    val AccentDefault = Ink
-    val Danger = Color(0xFFB3402F)
+    val danger: Color,
+) {
+    /** Accent defaults to ink in both grounds; each app overrides via KarakuliTheme(accent = …). */
+    val accentDefault: Color get() = ink
 }
+
+val karakuliLightColors = KarakuliColorSet(
+    paper = Color(0xFFF7F3E9),
+    paper2 = Color(0xFFEFE9DA),
+    ink = Color(0xFF26241F),
+    inkSoft = Color(0xFF6B665C),
+    inkFaint = Color(0xFFA9A294),
+    penBlue = Color(0xFF2F3AC7),
+    penGreen = Color(0xFF2E7D46),
+    penOrange = Color(0xFFE07A1F),
+    penPink = Color(0xFFD9569B),
+    washLavender = Color(0xFFE6E3F4),
+    washSage = Color(0xFFE2EAD9),
+    washBlush = Color(0xFFF6E0E2),
+    washButter = Color(0xFFF6ECC9),
+    danger = Color(0xFFB3402F),
+)
+
+/**
+ * Night. The brights are lifted rather than inverted — 0xFF2F3AC7 is already a dark blue,
+ * and on a dark ground a dark bright is not a bright. Mirrors web/tokens.css exactly; if one
+ * of these ever disagrees with the other, the CSS is right and this is the copy that drifted.
+ */
+val karakuliDarkColors = KarakuliColorSet(
+    paper = Color(0xFF1A1B33),
+    paper2 = Color(0xFF262845),
+    ink = Color(0xFFF2ECE0),
+    inkSoft = Color(0xFFA6AAC4),
+    inkFaint = Color(0xFF8C92B8),
+    penBlue = Color(0xFF8E96EE),
+    penGreen = Color(0xFF6FBF97),
+    penOrange = Color(0xFFE8A24A),
+    penPink = Color(0xFFE68CC0),
+    washLavender = Color(0xFF2C2E52),
+    washSage = Color(0xFF22333A),
+    washBlush = Color(0xFF3A2A4A),
+    washButter = Color(0xFF35331F),
+    danger = Color(0xFFE0705C),
+)
+
+/**
+ * The live palette. Provided by [KarakuliTheme]; read it as `LocalKarakuliColors.current.ink`
+ * anywhere a colour is needed outside a Material slot.
+ */
+val LocalKarakuliColors = staticCompositionLocalOf { karakuliLightColors }
 
 // ---------------------------------------------------------------------------------------
 // Type
@@ -203,42 +264,65 @@ fun organicShape(base: Dp, seed: Int): RoundedCornerShape {
 // ---------------------------------------------------------------------------------------
 
 private val karakuliLightColorScheme = lightColorScheme(
-    background = KarakuliColors.Paper,
-    onBackground = KarakuliColors.Ink,
-    surface = KarakuliColors.Paper2,
-    onSurface = KarakuliColors.Ink,
-    primary = KarakuliColors.AccentDefault, // overridden per-call by KarakuliTheme(accent = …)
-    onPrimary = KarakuliColors.Paper,
-    // surfaceVariant is where a per-app wash belongs — pick one of WashLavender / WashSage /
-    // WashBlush / WashButter as the app's default tinted surface (README "per-app knobs").
-    // surfaceVariant = KarakuliColors.WashSage,
-    error = KarakuliColors.Danger,
-    onError = KarakuliColors.Paper,
-    outline = KarakuliColors.Ink, // 1.5dp ink hairlines are the separation mechanism, not elevation
+    background = karakuliLightColors.paper,
+    onBackground = karakuliLightColors.ink,
+    surface = karakuliLightColors.paper2,
+    onSurface = karakuliLightColors.ink,
+    primary = karakuliLightColors.accentDefault, // overridden per-call by KarakuliTheme(accent = …)
+    onPrimary = karakuliLightColors.paper,
+    // surfaceVariant is where a per-app wash belongs — pick one of washLavender / washSage /
+    // washBlush / washButter as the app's default tinted surface (README "per-app knobs").
+    // surfaceVariant = karakuliLightColors.washSage,
+    error = karakuliLightColors.danger,
+    onError = karakuliLightColors.paper,
+    outline = karakuliLightColors.ink, // 1.5dp ink hairlines are the separation mechanism, not elevation
+)
+
+// Slot for slot the same mapping, read off the night set. Nothing structural differs:
+// elevation is 0.dp under either ground, because separation here is fill and hairline.
+private val karakuliDarkColorScheme = darkColorScheme(
+    background = karakuliDarkColors.paper,
+    onBackground = karakuliDarkColors.ink,
+    surface = karakuliDarkColors.paper2,
+    onSurface = karakuliDarkColors.ink,
+    primary = karakuliDarkColors.accentDefault,
+    onPrimary = karakuliDarkColors.paper,
+    error = karakuliDarkColors.danger,
+    onError = karakuliDarkColors.paper,
+    outline = karakuliDarkColors.ink,
 )
 
 /**
- * Karakuli theme root. Wires the light-only [lightColorScheme] above, [KarakuliTypography]
- * and [KarakuliShapes] into [MaterialTheme].
+ * Karakuli theme root. Picks a ground, publishes the matching [KarakuliColorSet] on
+ * [LocalKarakuliColors], and wires the matching [androidx.compose.material3.ColorScheme],
+ * [KarakuliTypography] and [KarakuliShapes] into [MaterialTheme].
  *
- * No dark scheme yet, by design: the naive/hand-drawn look reads as warm paper under a
- * physical light, and a correct dark variant needs its own colour study (which washes read
- * as "warm paper at night" vs. which go muddy) rather than a mechanical channel invert.
+ * The colour study the previous version of this comment said was missing has been done —
+ * the washes are diluted toward whichever ground they sit on rather than dimmed, and the
+ * brights are lifted rather than inverted. STYLE.md §1 holds the values and the reasoning.
  *
- * @param accent overrides [KarakuliColors.AccentDefault] as `primary` — see README
- *   "per-app knobs: accent colour".
+ * @param darkTheme follows the system by default; pass a value to force one ground.
+ * @param accent overrides the ground's own [KarakuliColorSet.accentDefault] as `primary` —
+ *   see README "per-app knobs: accent colour". Null rather than a constant default on
+ *   purpose: the default accent IS the ink, so it has to be resolved after the ground is
+ *   known, or a night app is handed a near-black primary on a near-black surface.
  */
 @Composable
 fun KarakuliTheme(
-    accent: Color = KarakuliColors.AccentDefault,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    accent: Color? = null,
     content: @Composable () -> Unit,
 ) {
-    MaterialTheme(
-        colorScheme = karakuliLightColorScheme.copy(primary = accent),
-        typography = KarakuliTypography,
-        shapes = KarakuliShapes,
-        content = content,
-    )
+    val colors = if (darkTheme) karakuliDarkColors else karakuliLightColors
+    val scheme = if (darkTheme) karakuliDarkColorScheme else karakuliLightColorScheme
+    CompositionLocalProvider(LocalKarakuliColors provides colors) {
+        MaterialTheme(
+            colorScheme = scheme.copy(primary = accent ?: colors.accentDefault),
+            typography = KarakuliTypography,
+            shapes = KarakuliShapes,
+            content = content,
+        )
+    }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -254,7 +338,7 @@ fun KarakuliTheme(
 @Composable
 fun KarakuliWobblyDivider(
     modifier: Modifier = Modifier,
-    color: Color = KarakuliColors.Ink.copy(alpha = 0.5f),
+    color: Color = LocalKarakuliColors.current.ink.copy(alpha = 0.5f),
     strokeWidth: Dp = 1.5.dp,
 ) {
     val strokeWidthPx = with(LocalDensity.current) { strokeWidth.toPx() }
@@ -307,7 +391,7 @@ fun KarakuliWobblyDivider(
 fun KarakuliCheckMark(
     checked: Boolean,
     modifier: Modifier = Modifier,
-    color: Color = KarakuliColors.Ink,
+    color: Color = LocalKarakuliColors.current.ink,
     size: Dp = 20.dp,
 ) {
     // No reduce-motion gate here on purpose — Karakuli animates for everyone
@@ -343,17 +427,21 @@ fun KarakuliCheckMark(
 // Previews
 // ---------------------------------------------------------------------------------------
 
-@Preview(showBackground = true, backgroundColor = 0xFFF7F3E9)
+@Preview(name = "button · day", showBackground = true, backgroundColor = 0xFFF7F3E9)
+@Preview(name = "button · night", showBackground = true, backgroundColor = 0xFF1A1B33)
 @Composable
 private fun KarakuliButtonPreview() {
+    // Both previews run the same composable; only the ground differs, which is the
+    // property worth previewing. Nothing below names a colour that isn't the live set.
     KarakuliTheme {
-        Surface(color = KarakuliColors.Paper) {
+        val colors = LocalKarakuliColors.current
+        Surface(color = colors.paper) {
             Button(
                 onClick = {},
                 shape = organicShape(base = 12.dp, seed = 1),
-                colors = ButtonDefaults.buttonColors(containerColor = KarakuliColors.AccentDefault),
+                colors = ButtonDefaults.buttonColors(containerColor = colors.accentDefault),
             ) {
-                Text("Сохранить", color = KarakuliColors.Paper, style = KarakuliTypography.labelLarge)
+                Text("Сохранить", color = colors.paper, style = KarakuliTypography.labelLarge)
             }
         }
     }
@@ -366,9 +454,9 @@ private fun KarakuliCardPreview() {
         Card(
             modifier = Modifier.padding(16.dp),
             shape = organicShape(base = 16.dp, seed = 7),
-            colors = CardDefaults.cardColors(containerColor = KarakuliColors.WashSage),
+            colors = CardDefaults.cardColors(containerColor = LocalKarakuliColors.current.washSage),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // never any shadow
-            border = BorderStroke(1.5.dp, KarakuliColors.Ink),
+            border = BorderStroke(1.5.dp, LocalKarakuliColors.current.ink),
         ) {
             Column(Modifier.padding(16.dp)) {
                 Text("Наброски", style = KarakuliTypography.titleLarge)
@@ -386,7 +474,7 @@ private fun KarakuliCardPreview() {
 @Composable
 private fun KarakuliDividerAndCheckPreview() {
     KarakuliTheme {
-        Column(Modifier.padding(16.dp).background(KarakuliColors.Paper)) {
+        Column(Modifier.padding(16.dp).background(LocalKarakuliColors.current.paper)) {
             Text("Above the divider", style = KarakuliTypography.bodyMedium)
             KarakuliWobblyDivider(modifier = Modifier.padding(vertical = 12.dp))
             Text("Below the divider", style = KarakuliTypography.bodyMedium)

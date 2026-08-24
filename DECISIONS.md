@@ -14,7 +14,7 @@ Two sections:
 - Radio and uncheck currently share a "release"-family sameness the user noticed but kept as-is — worth a second look if it starts feeling indistinct in practice.
 - Button-tap cue `press` is provisional — not yet user-confirmed by ear the way check/uncheck/radio were.
 - A stated **minimum render size for hand-drawn character**. Knot wobble is 2–4% of the canvas, which on an eleven-point mark is a sixth of a point — invisible, so a small drawn circle renders as the compass circle §3 forbids. This is the third instance of a pattern the canon already records twice separately (boil needs ~40px; crayon grain is hero-only) and may want stating once as a principle. Deliberately not adopted on 2026-08-19 — see that entry for the workaround in use and the open question it leaves.
-- Dark mode. Candidate direction: deep warm-gray paper + chalk-coloured ink, same paper+ink+colour-moments structure. Not designed.
+- `.krk-enter-sprout` animates `transform`, so it destroys the placement of any element positioned with one. Found by the Graveyard build (its `docs/GUIDE.md` records it) and carried here when the night palette was, but not fixed with it — a palette change is the wrong commit to move the entrance layer in. The fix is probably a wrapper element owning the placement while the inner one owns the animation; unverified.
 - Love2D mapping — a Lua-side equivalent of the web tokens, including how the boil-filter concept translates to a non-CSS rendering context.
 - Rules for data-dense screens (tables, charts) — canon doesn't address this yet.
 - Empty/error/loading state patterns, beyond the general colour-moments guidance in `STYLE.md` §5.
@@ -27,6 +27,233 @@ Two sections:
 ---
 
 ## Log
+
+### 2026-08-24
+
+#### The showcase is in English, and the calm screen loses its wash
+
+Two small changes with one cause: the README's pictures are a *view* of `demo/index.html`,
+so whatever is wrong on that page is wrong in the first thing anyone sees.
+
+**The page is English now.** `CLAUDE.md` used to say "canon/docs/schema files are English;
+demo pages and all in-app UI text are Russian." No entry in this log ever gave a reason for
+the demo half of that, and it had a cost that only became visible once the README existed:
+an English README whose three screenshots are entirely in Russian. The showcase is the thing
+strangers are pointed at. It is English, `<html lang>` included, and the rule in `CLAUDE.md`
+now separates the two cases it used to run together — this repo is English; an app *built
+with* Karakuli speaks whatever its users speak, which is why both typefaces shipping full
+Cyrillic is a canon requirement rather than a nicety.
+
+Two things deliberately kept. **Пельмень and Батон keep their names**, because a name is a
+name and `STYLE.md` §9 and the English README already spell them that way. And the type
+plate's specimen is the *translated* Russian pangram — "Eat a few more of these soft French
+rolls, and do have some tea" — rather than "the quick brown fox": the sample's charm is that
+it is about rolls and tea, which suits the system better than a fox does.
+
+The README's "Russian and English throughout" bullet was true and is not any more; it now
+says the typefaces carry full Cyrillic, which is the part that was actually load-bearing.
+
+**The calm screen's card drops its sage wash.** The user called the tinted green behind the
+radio scale ugly, and looking at why it is ugly turned out to be the more useful answer than
+picking a different tint: §5 says a base screen stays paper and ink, and the tracker is the
+calmest screen on the page. A wash there is the loudest mark on it, and the five paper radio
+eggs punched into the tint made the contrast worse — the radios fill with `--krk-paper`, not
+with the wash, so the card was the one place on the page where paper sat inside a tinted
+surface. It is a plain `.krk-card` now, and the scale is what you look at.
+
+Rejected: swapping sage for another wash, which fixes the hue and leaves a base screen
+wearing a colour it has not earned; and re-tuning `--krk-wash-sage` itself, which would have
+reached every app using it — JustSit's garden included — to solve a problem that was about
+where the colour was, not which colour it was. Sage is unchanged and still shown in the
+gallery, on a card whose whole job is to be a wash.
+
+### 2026-08-24
+
+#### Dark mode ships — Graveyard's indigo night, promoted to canon
+
+Dark mode leaves the Unsettled backlog, where it had sat since the beginning. `STYLE.md` §1
+now carries a second value for every colour token, `web/tokens.css` declares each one as a
+`light-dark()` pair, and `compose/Karakuli.kt` carries the same table.
+
+The values are Graveyard's `data-palette='b'` — `#1A1B33` paper, `#F2ECE0` chalk ink, all
+four pen brights lifted — taken as they were rather than re-derived. They had already been
+chosen by eye against real screens, lived with, and partly contrast-tuned in place (that
+repo's own comment records `--krk-ink-faint` being raised from `#6E7391` at 3.62:1 to clear
+the small-text floor). Re-deriving them would have thrown that away to arrive somewhere
+similar.
+
+**This overrules §11's own prediction, and the prediction was not vague.** It said the
+working hypothesis was "a deep warm-gray paper with a chalk-coloured ink … rather than
+inverting to a cold black theme." The shipped ground is a cool indigo, and §11's line is
+therefore deleted rather than quietly left to contradict §1. The rejected warm alternative
+is not hypothetical either: Graveyard also carries `data-palette='a'`, a complete "night,
+warm dusk" set on aubergine `#241C24`, which is exactly what §11 described. It was built,
+it was viewable next to the indigo, and the indigo is the one that got shipped in a real
+app. The cost is stated plainly in §1: the system is no longer warm everywhere, and that is
+now the one deliberate exception rather than an unnoticed drift.
+
+Four rules came out of the port and are written into §1 because each one has a wrong answer
+that looks right: brights **lift** rather than invert (a dark bright on a dark ground is not
+a bright); washes dilute toward **their own** ground rather than toward cream; distance is a
+**hue shift**, never chalk at low opacity, because dimming chalk gives a muddy grey that
+reads as dirt on the page rather than as air; and the accent stays `var(--krk-ink)`, so it
+follows the ground by itself.
+
+**§8's knob budget is not widened.** The governance note four days ago said Graveyard's
+palette was "four things, where §8 allows three knobs and none of them is the paper." That
+objection is answered by making the ground a property of the *system* rather than a fourth
+thing an app may set. An app still varies accent, wash and energy. What changed is that each
+of those three now means the same thing under either ground — an app that sets its accent to
+a pen bright gets the lifted value at night for nothing, because the token carries both.
+
+Rejected on the way: a `[data-theme="dark"] { … }` override block, which needs its values
+written twice, once under the attribute and once under `@media (prefers-color-scheme: dark)`
+— two copies of fifteen hexes is a drift generator, and `light-dark()` has none. Also
+rejected: importing Graveyard's other departure. It draws light with CSS radial gradients,
+which §3 forbids outright; that is a local, argued exception for depicting light in one
+illustration and it stays there. No gradient enters the kit.
+
+Selection is mirrored from the `article` sibling rather than invented — same attribute, same
+three modes, same exported no-flash snippet — so a person who has met one of the two systems
+does not have to learn a second way of asking for dark. Following the OS by default is a
+deliberate difference from how this repo treated `prefers-reduced-motion`, and the two are
+not the same call: that guard was dropped because the user wanted motion for everyone, which
+is a statement about motion. A colour-scheme preference carries no such intent.
+
+The poster arm stays light, said out loud in §1 so it does not read as an oversight. It is
+print.
+
+#### The six baked marks are masks now — the prerequisite, paid
+
+`karakuli.css` drew six marks — check, radio scribble, tab underline, divider, list
+separator, inline arrow — as data URIs with the ink hex written into the markup, ten
+instances of `%2326241F` across six declarations. The entry on 2026-08-20 called this "the
+single largest obstacle to the dark mode sketched in the Unsettled list" and said converting
+them was "a prerequisite, not a detail." It was right, and this is that work.
+
+Each is a stencil now: drawn in `%23000`, cut with `mask-image`, coloured by
+`background-color: currentColor`. The technique is Graveyard's, which had already repaired
+the two of the six it happened to use and left a note saying it was "worth carrying upstream
+if the night palette becomes canon."
+
+Two things were learned doing it that are worth more than the change itself:
+
+**A mask clips the whole element, borders and outlines included.** Measured, not assumed —
+an `<input>` with a mask on it loses the very edge that makes it a box. So the check and the
+radio carry their mark on a `::after` rather than on their own background, and the tab
+underline moved to one too (a mask on the tab itself would have cut the label). Only the
+three marks that already lived on an element that is nothing but the mark — a bare `<hr>`,
+two existing pseudo-elements — could take it directly. §4 now states this as a rule, because
+the failure is invisible until someone puts a mark on a bordered box.
+
+**Pseudo-elements on an `appearance: none` input render in both engines.** Checked in
+Chromium and in Firefox before building on it, since `<input>` is a replaced element and the
+spec does not promise it.
+
+Rejected: moving the drawings to files, which is what the 2026-08-20 note literally
+prescribed. Three reasons to keep them inline. The kit is advertised as two `<link>` tags
+with no build step, and files mean relative asset paths and five more fetches. `check-sync`
+counts `doodles/*.svg` against every "N motifs" claim in the docs, so new files there would
+falsify claims that are still true. And the colour was never the file's fault — it was the
+hex, which is gone either way.
+
+Two consequences beyond the theme. `.krk-arrow-inline` on an accent-filled button drew ink
+on ink and disappeared; logged as its own defect on 2026-08-20, and fixed here for free the
+moment the mark started following `currentColor`. And `.krk-btn--primary:hover` was a
+hardcoded `#3a372f`, commented "one step lighter than ink" — a premise that reverses at
+night, when the fill is chalk and the hover has to go darker. It is
+`color-mix(in srgb, var(--krk-accent) 91%, var(--krk-paper))` now, which resolves to
+`#393731` by day (the old value, within a step per channel) and moves the right way in the
+dark by itself. Its knowing duplicate in `demo/index.html`'s painted-states block went with
+it.
+
+#### `check-sync` gains a baked-colour rule and a contrast pass
+
+Two checks, both ported from the `article` sibling along with its `tools/contrast.mjs` —
+copied rather than reimplemented, so the same arithmetic cannot disagree with itself in two
+repos.
+
+`baked-colour` fails on any colour inside a `data:image/svg+xml`, exempting `%23000` and
+only that, with the reason in a comment: a mask source needs some paint to carry alpha and
+`mask-mode: alpha` throws the colour away, so black there is a carrier rather than a
+decision. This is the check that would have caught the six marks years earlier.
+
+`--contrast` walks a `[ink, surface, minimum, label]` table in both grounds. Writing it
+surfaced something worth recording: **the first version failed on three pairs that were not
+regressions.** `--krk-ink-faint` misses 4.5:1 on cream by a mile, and pen orange misses
+3:1 — both because canon already says what they are for. §1 calls ink-faint "never for text
+a user must read" and orange "illustration only." The bar was wrong, not the colour. So the
+table takes a per-ground minimum where canon sets a different one per ground, and decoration
+is held to "can you still see it" rather than to a reading floor. A checker that darkens a
+hairline until it stops being a hairline is worse than no checker.
+
+Recorded because the numbers are counter-intuitive: on indigo **all four** brights clear AA
+at any size, orange going from 2.72:1 to 7.77:1. §1 says explicitly that this does not
+license using them as text there. The restriction is §5's rationing doctrine; contrast was
+only ever the floor beneath that decision, never the reason for it.
+
+### 2026-08-24
+
+#### The README leads with two shipped apps, not with the kit's own demo screens
+
+Nothing in canon changed. The README opened on `quiet.png` and `moment.png` side by side at
+`width="49%"` — two 720×1440 crops, which GitHub renders as a pair of narrow towers, and which
+was the first thing anyone saw. Behind that, every picture on the page was a synthetic demo
+screen with placeholder content, so a stranger met a swatch page rather than a design language.
+A kit cannot prove range about itself; two apps built on it can. The hero is now JustSit's
+three phone screens on the default paper and Graveyard's night scene, one above the other at
+full width, and the three knobs in *Make it yours* are explained against what those two apps
+actually turned.
+
+The pictures were copied out of the sibling repos rather than re-shot, downscaled to a 1600px
+long edge with `sips`. Where they came from, so a refresh knows where to go back to:
+`~/orca/JustSit/docs/images/hero.png`, `~/orca/projects/Graveyard/docs/images/hero.png` and
+`candle.gif` beside it. They are snapshots and will drift from their sources; that is the price
+of the range they buy. **JustSit is a private repo**, so it is named in the README and not
+linked — Graveyard is public and gets both its repo and its live page.
+
+Recorded because it will otherwise read as an oversight: **Graveyard's night palette is not
+sanctioned canon.** It restates `--krk-paper`, `--krk-ink` and lifts all four pen brights so
+they still read as brights on a dark ground — four things, where §8 allows three knobs and none
+of them is the paper. Dark mode is in Unsettled and stays there. The README says so in place,
+rather than showing the picture and letting it pass as a supported theme. It is now an
+Unsettled item with a shipped worked example, which is a better position to decide from than
+the sketch that was there before, but promoting it is still the user's call.
+
+Rejected: composing a single hero out of both apps side by side, which reads as a moodboard
+rather than as software; and keeping the demo phones as the hero and merely re-cropping them,
+which fixes the proportions and leaves the actual problem — placeholder content — untouched.
+
+#### Screenshots — the clip gets a margin, and the gallery gets its own viewport
+
+`tools/shoot.mjs` clipped to an element's exact bounding box. A bounding box ends *on* the
+border, and every surface in this kit is a 1.5px stroke, so the three phones came back with
+their drawn frames sheared off top and bottom — subtle enough to read as a broken drawing
+rather than as a bad crop. Shots now take a `pad` in CSS pixels, applied inside the page where
+the document width is known so the margin is always paper. `.demo-note` joins the control strip
+and the plate markers in being hidden for the capture: a plate's explanation of itself arrives
+in a crop as a severed line of grey text.
+
+`gallery.png` becomes `components.png` and is shot at a 980px viewport rather than 1440. A
+specimen row is left-packed, so at full plate width roughly a third of the picture was the
+paper to the right of the last button — emptiness the page itself just walks past on the way to
+the next thing, and which a crop preserves forever. The `max: 1500` height cap went with it; it
+had been slicing the sheet through the middle of a textarea.
+
+`quiet.png` and `moment.png` stop being taken. They existed to be the README's opening pair and
+had no other reader; a picture regenerated on every design change but embedded nowhere is drift
+with a head start, which is the thing `tools/` exists to prevent. Every shot the script now
+takes appears on the page it is taken for.
+
+#### The motif field is bounded to five columns
+
+`.demo-motif-field` is `auto-fill, minmax(112px, 1fr)`, which on a desktop plate gave eleven
+columns and then a ragged nine — a half-empty last row, which reads as a rendering fault rather
+than as a garden. Bounded to a measure that yields five columns and four full rows, matching
+`.demo-note`'s width so the plate keeps one left edge and one right one; `auto-fill` still drops
+to three or two on a narrow screen. Its foot padding came down at the same time: the overhang
+rule in §9 is about the *top*, where a motif at 168% stands well over its own root, while every
+motif already leaves the bottom quarter of its cell as ground.
 
 ### 2026-08-20
 
